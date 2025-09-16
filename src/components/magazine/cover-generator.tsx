@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -115,3 +116,4 @@ export default function MagazineCoverGenerator({ updates }: { updates: Update[] 
     </div>
   );
 }
+
