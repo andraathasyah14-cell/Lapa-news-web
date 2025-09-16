@@ -15,8 +15,8 @@ export default async function CountryProfilePage({ params }: { params: { id: str
     notFound();
   }
 
-  const [updates] = await Promise.all([
-    getUpdatesByCountryId(country.id)
+  const [updates, allCountries] = await Promise.all([
+    getUpdatesByCountryId(country.id),
   ]);
 
   return (
