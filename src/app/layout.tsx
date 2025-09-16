@@ -37,10 +37,9 @@ export default async function RootLayout({
         <body className="font-body antialiased">
           <div className="fixed inset-0 z-[-1] bg-background">
             <div
-              className="absolute inset-0 bg-repeat"
+              className="absolute inset-0 bg-cover bg-center"
               style={{
-                backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 100' width='600' height='100'%3e%3cstyle%3e.logo-text %7b font-family: 'Playfair+Display', serif; font-size: 32px; font-weight: bold; letter-spacing: 0.1em; fill: hsl(195, 100%25, 90%25); %7d%3c/style%3e%3ctext class='logo-text' x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle'%3eUNITED LAPA NATIONS%3c/text%3e%3c/svg%3e")`,
-                backgroundSize: '800px auto',
+                backgroundImage: `url("https://media-cgk2-2.cdn.whatsapp.net/v/t61.24694-24/510376232_1160472446130816_4641922013729007901_n.jpg?ccb=11-4&oh=01_Q5Aa2gE1QXkvwY-ToGr0ldgryRKK7yq2AjLdaGiy4nr3KUClgQ&oe=68D615BE&_nc_sid=5e03e0&_nc_cat=102")`,
                 opacity: 0.1,
                 filter: 'blur(3px)',
               }}
