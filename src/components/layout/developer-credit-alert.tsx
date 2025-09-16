@@ -3,12 +3,11 @@
 
 import { useEffect, useState } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { X } from "lucide-react";
+import { X, Terminal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar } from "../ui/avatar";
-import { UserIcon } from "../icons/user-icon";
 
-const STORAGE_KEY = "geopolitika_fantastica_dev_credit_dismissed";
+const STORAGE_KEY = "uln_dev_warning_dismissed";
 
 export default function DeveloperCreditAlert() {
   const [isVisible, setIsVisible] = useState(false);
@@ -35,13 +34,13 @@ export default function DeveloperCreditAlert() {
         <div className="flex items-center gap-4">
             <Avatar className="h-12 w-12 border-2 border-primary/50">
                 <div className="bg-primary/10 w-full h-full flex items-center justify-center">
-                    <UserIcon className="h-8 w-8 text-primary" />
+                    <Terminal className="h-8 w-8 text-primary" />
                 </div>
             </Avatar>
             <div>
-                <AlertTitle className="font-headline text-lg text-primary">Developed by Andra</AlertTitle>
+                <AlertTitle className="font-headline text-lg text-primary">Under Development</AlertTitle>
                 <AlertDescription className="text-card-foreground/80">
-                    Welcome to the app! Hope you enjoy your stay.
+                    This website is still in its early development phase.
                 </AlertDescription>
             </div>
         </div>
