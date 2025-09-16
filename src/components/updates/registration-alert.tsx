@@ -30,12 +30,12 @@ export default function RegistrationAlert() {
   }
 
   return (
-    <Alert className="bg-card/80 border-card-foreground/20 relative pr-12 text-card-foreground">
-      <AlertCircle className="h-4 w-4" />
-      <AlertTitle className="font-headline">Welcome to the World Stage!</AlertTitle>
+    <Alert className="bg-card/80 border-accent/50 relative pr-12 text-card-foreground backdrop-blur-sm">
+      <AlertCircle className="h-4 w-4 text-primary" />
+      <AlertTitle className="font-headline text-primary">Welcome to the World Stage!</AlertTitle>
       <AlertDescription className="text-card-foreground/80">
         It looks like you haven't founded a nation yet.{" "}
-        <Link href="/register-country" className="font-bold underline hover:text-card-foreground">
+        <Link href="/register-country" className="font-bold text-primary/90 underline hover:text-primary">
           Register your country
         </Link>
         {" "}to start shaping global events!
@@ -43,7 +43,7 @@ export default function RegistrationAlert() {
       <Button
         variant="ghost"
         size="icon"
-        className="absolute top-2 right-2 h-6 w-6 text-card-foreground/80 hover:text-card-foreground"
+        className="absolute top-2 right-2 h-6 w-6 text-card-foreground/60 hover:text-card-foreground"
         onClick={handleDismiss}
       >
         <X className="h-4 w-4" />

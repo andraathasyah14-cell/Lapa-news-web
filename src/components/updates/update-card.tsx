@@ -20,13 +20,14 @@ import {
 import { CommentSection } from "@/components/updates/comment-section";
 import { Badge } from "@/components/ui/badge";
 import { MessageSquare, Map } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-interface UpdateCardProps {
+interface UpdateCardProps extends React.HTMLAttributes<HTMLDivElement> {
   update: Update;
   country?: Country;
 }
 
-export function UpdateCard({ update, country }: UpdateCardProps) {
+export function UpdateCard({ update, country, className, ...props }: UpdateCardProps) {
   const formattedDate = new Date(update.createdAt).toLocaleDateString("en-US", {
     year: 'numeric',
     month: 'long',
@@ -34,14 +35,17 @@ export function UpdateCard({ update, country }: UpdateCardProps) {
   });
 
   return (
-    <Card className="overflow-hidden border-accent/50 bg-card/80 backdrop-blur-sm transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-1 group">
+    <Card 
+      className={cn("overflow-hidden border-accent/50 bg-card/80 backdrop-blur-sm transition-all duration-300 hover:shadow-xl hover:border-accent hover:shadow-primary/10 hover:-translate-y-1 group", className)}
+      {...props}
+    >
       {update.coverImage && (
         <div className="aspect-video relative w-full overflow-hidden">
             <Image 
                 src={update.coverImage} 
                 alt={update.title} 
                 fill 
-                className="object-cover transition-transform duration-300 group-hover:scale-105"
+                className="object-cover transition-transform duration-500 ease-in-out group-hover:scale-105"
                 data-ai-hint="news story" 
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
