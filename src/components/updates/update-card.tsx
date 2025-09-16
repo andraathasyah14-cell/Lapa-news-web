@@ -30,7 +30,7 @@ export function UpdateCard({ update, country }: UpdateCardProps) {
   });
 
   return (
-    <Card className="overflow-hidden border-accent bg-card/80">
+    <Card className="overflow-hidden border-accent bg-card/90 backdrop-blur-sm">
       <CardHeader>
         <div className="flex justify-between items-start">
             <CardDescription className="text-card-foreground/80">
