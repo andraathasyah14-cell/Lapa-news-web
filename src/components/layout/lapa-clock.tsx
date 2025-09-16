@@ -5,8 +5,8 @@ import { useState, useEffect } from 'react';
 import { Clock } from 'lucide-react';
 
 // Fictional world time parameters
-const REAL_WORLD_BASE_DATE = new Date('2025-09-01T00:00:00Z');
-const LAPA_BASE_YEAR = 2080;
+const REAL_WORLD_BASE_DATE = new Date('2017-09-01T00:00:00Z');
+const LAPA_BASE_YEAR = 2017;
 const LAPA_MONTHS = ["Primus", "Secundus", "Tertius", "Quartus", "Quintus", "Sextus", "Septimus", "Octavus", "Nonus", "Decimus", "Undecimus", "Duodecimus"];
 const LAPA_DAYS_IN_MONTH = 30;
 const LAPA_MONTHS_IN_YEAR = 12;
