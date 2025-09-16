@@ -1,12 +1,12 @@
 "use client";
 
 import type { Comment } from "@/lib/definitions";
-import { useFormState, useFormStatus } from "react-dom";
+import { useActionState, useEffect, useRef } from "react";
+import { useFormStatus } from "react-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { addCommentAction } from "@/lib/actions";
-import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -31,7 +31,7 @@ function SubmitButton() {
 }
 
 export function CommentSection({ updateId, comments }: CommentSectionProps) {
-  const [state, formAction] = useFormState(addCommentAction, {
+  const [state, formAction] = useActionState(addCommentAction, {
     message: "",
     errors: undefined,
   });

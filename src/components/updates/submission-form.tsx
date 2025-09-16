@@ -1,6 +1,7 @@
 "use client";
 
-import { useFormState, useFormStatus } from "react-dom";
+import { useActionState, useEffect } from "react";
+import { useFormStatus } from "react-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -25,7 +26,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
 
@@ -47,7 +47,7 @@ function SubmitButton() {
 }
 
 export default function UpdateSubmissionForm({ countries }: { countries: Country[] }) {
-  const [state, formAction] = useFormState(submitUpdateAction, {
+  const [state, formAction] = useActionState(submitUpdateAction, {
     message: "",
     errors: undefined,
   });

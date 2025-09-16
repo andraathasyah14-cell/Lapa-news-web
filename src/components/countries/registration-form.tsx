@@ -1,6 +1,7 @@
 "use client";
 
-import { useFormState, useFormStatus } from "react-dom";
+import { useActionState, useEffect } from "react";
+import { useFormStatus } from "react-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -16,7 +17,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 
 const CountrySchema = z.object({
@@ -34,7 +34,7 @@ function SubmitButton() {
 }
 
 export default function CountryRegistrationForm() {
-  const [state, formAction] = useFormState(registerCountryAction, {
+  const [state, formAction] = useActionState(registerCountryAction, {
     message: "",
     errors: undefined,
   });
