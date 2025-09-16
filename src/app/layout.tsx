@@ -10,6 +10,7 @@ import { AppSidebar } from '@/components/layout/app-sidebar';
 import { Header } from '@/components/layout/header';
 import { Toaster } from "@/components/ui/toaster"
 import './globals.css';
+import WhatsAppWarning from '@/components/layout/whatsapp-warning';
 
 export const metadata: Metadata = {
   title: 'UNITED LAPA NATIONS',
@@ -50,12 +51,13 @@ export default async function RootLayout({
             </Sidebar>
             <SidebarInset>
               <Header />
-              <div className="p-4 md:p-8">
+              <div className="p-4 md:p-8 pb-24">
                 {children}
               </div>
             </SidebarInset>
           </SidebarProvider>
           <Toaster />
+          <WhatsAppWarning />
         </body>
       </html>
     </JotaiProvider>
