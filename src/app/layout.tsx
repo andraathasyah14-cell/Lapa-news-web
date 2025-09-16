@@ -10,7 +10,7 @@ import { Toaster } from "@/components/ui/toaster"
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Geopolitika Fantastica',
+  title: 'UNITED LAPA NATIONS',
   description: 'Craft and chronicle your own fictional nations.',
 };
 

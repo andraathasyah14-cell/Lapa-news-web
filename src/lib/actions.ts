@@ -131,7 +131,7 @@ export async function generateCoverAction(formData: FormData) {
     const input: GenerateMagazineCoverInput = {
       updateTitle: update.title,
       updateContent: update.content,
-      brandName: "Geopolitika Fantastica"
+      brandName: "UNITED LAPA NATIONS"
     };
     const result = await generateMagazineCover(input);
     return { coverImage: result.coverImage };

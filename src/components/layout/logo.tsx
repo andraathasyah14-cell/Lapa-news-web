@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 export function Logo({ className }: { className?: string }) {
   return (
     <Link href="/" className={cn("font-headline font-bold text-2xl tracking-tight", className)}>
-      Geopolitika Fantastica
+      UNITED LAPA NATIONS
     </Link>
   );
 }

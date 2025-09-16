@@ -30,11 +30,11 @@ export function UpdateCard({ update, country }: UpdateCardProps) {
   });
 
   return (
-    <Card className="overflow-hidden border-accent bg-accent/5">
+    <Card className="overflow-hidden border-accent bg-card/80">
       <CardHeader>
         <div className="flex justify-between items-start">
-            <CardDescription>
-                From <span className="font-semibold text-primary">{country?.name || 'An unknown nation'}</span> &bull; {formattedDate} &bull; Year {update.year}
+            <CardDescription className="text-card-foreground/80">
+                From <span className="font-semibold text-card-foreground">{country?.name || 'An unknown nation'}</span> &bull; {formattedDate} &bull; Year {update.year}
             </CardDescription>
             {update.needsMapUpdate && (
                 <Badge variant="destructive" className="flex items-center gap-1">
@@ -43,10 +43,10 @@ export function UpdateCard({ update, country }: UpdateCardProps) {
                 </Badge>
             )}
         </div>
-        <CardTitle className="font-headline text-3xl text-primary">{update.title}</CardTitle>
+        <CardTitle className="font-headline text-3xl text-card-foreground">{update.title}</CardTitle>
       </CardHeader>
       <CardContent>
-        <p className="text-foreground/80 leading-relaxed">{update.content}</p>
+        <p className="text-card-foreground/90 leading-relaxed">{update.content}</p>
       </CardContent>
       <CardFooter>
         <Accordion type="single" collapsible className="w-full">
