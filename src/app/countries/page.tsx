@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { PlusCircle } from "lucide-react";
 import type { Country } from "@/lib/definitions";
+import { FeatureLockDialog } from "@/components/layout/feature-lock-dialog";
 
 export default async function CountriesPage() {
   const countries: Country[] = await getCountries();
@@ -25,12 +26,12 @@ export default async function CountriesPage() {
         <h1 className="font-headline text-4xl font-bold text-primary md:text-5xl">
           Registered Nations
         </h1>
-        <Button asChild>
-          <Link href="/register-country">
+        <FeatureLockDialog>
+          <Button>
             <PlusCircle className="mr-2 h-4 w-4" />
             Register New
-          </Link>
-        </Button>
+          </Button>
+        </FeatureLockDialog>
       </div>
 
       <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
