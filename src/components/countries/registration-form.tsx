@@ -31,7 +31,7 @@ function SubmitButton() {
 }
 
 export default function CountryRegistrationForm() {
-  const { t, locale } = useLocalization();
+  const { t } = useLocalization();
 
   const CountrySchema = z.object({
     name: z.string().min(3, t('validation.countryNameMin')),
@@ -62,10 +62,6 @@ export default function CountryRegistrationForm() {
       });
     }
   }, [state, toast, t]);
-
-   useEffect(() => {
-    form.trigger();
-  }, [locale, form]);
 
   return (
     <Form {...form}>

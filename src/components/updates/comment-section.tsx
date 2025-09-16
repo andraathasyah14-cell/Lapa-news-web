@@ -28,7 +28,7 @@ function SubmitButton() {
 }
 
 export function CommentSection({ updateId, comments }: CommentSectionProps) {
-  const { t, locale } = useLocalization();
+  const { t } = useLocalization();
 
   const CommentSchema = z.object({
     author: z.string().min(2, t('validation.authorMin')),
@@ -53,10 +53,6 @@ export function CommentSection({ updateId, comments }: CommentSectionProps) {
       formRef.current?.reset();
     }
   }, [state, form]);
-
-   useEffect(() => {
-    form.trigger();
-  }, [locale, form]);
 
   return (
     <div className="space-y-6 pt-4">
