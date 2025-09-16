@@ -20,9 +20,9 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { useLocalization } from "@/hooks/use-localization";
 
-const CountrySchema = (t: (key: string) => string) => z.object({
-  name: z.string().min(3, t('validation.countryNameMin')),
-  owner: z.string().min(2, t('validation.ownerNameMin')),
+const CountrySchema = z.object({
+  name: z.string().min(3, 'validation.countryNameMin'),
+  owner: z.string().min(2, 'validation.ownerNameMin'),
 });
 
 function SubmitButton() {
@@ -44,8 +44,8 @@ export default function CountryRegistrationForm() {
   });
   const { toast } = useToast();
 
-  const form = useForm<z.infer<ReturnType<typeof CountrySchema>>>({
-    resolver: zodResolver(CountrySchema(t)),
+  const form = useForm<z.infer<typeof CountrySchema>>({
+    resolver: zodResolver(CountrySchema),
     defaultValues: {
       name: "",
       owner: "",

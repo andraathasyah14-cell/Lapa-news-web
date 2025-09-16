@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useActionState, useEffect } from "react";
@@ -31,11 +30,11 @@ import { useToast } from "@/hooks/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useLocalization } from "@/hooks/use-localization";
 
-const UpdateSchema = (t: (key: string) => string) => z.object({
-  title: z.string().min(5, t('validation.titleMin')),
-  content: z.string().min(20, t('validation.contentMin')),
-  year: z.coerce.number().int().min(1, t('validation.yearMin')),
-  countryId: z.string().min(1, t('validation.countryRequired')),
+const UpdateSchema = z.object({
+  title: z.string().min(5, 'validation.titleMin'),
+  content: z.string().min(20, 'validation.contentMin'),
+  year: z.coerce.number().int().min(1, 'validation.yearMin'),
+  countryId: z.string().min(1, 'validation.countryRequired'),
   needsMapUpdate: z.boolean().default(false).optional(),
 });
 
@@ -58,8 +57,8 @@ export default function UpdateSubmissionForm({ countries }: { countries: Country
   });
   const { toast } = useToast();
 
-  const form = useForm<z.infer<ReturnType<typeof UpdateSchema>>>({
-    resolver: zodResolver(UpdateSchema(t)),
+  const form = useForm<z.infer<typeof UpdateSchema>>({
+    resolver: zodResolver(UpdateSchema),
     defaultValues: {
       title: "",
       content: "",
@@ -147,7 +146,7 @@ export default function UpdateSubmissionForm({ countries }: { countries: Country
                 <Input type="number" {...field} />
               </FormControl>
               <FormMessage />
-            </FormItem>
+            </FormMItem>
           )}
         />
          <FormField
