@@ -16,17 +16,19 @@ import {
   BookImage,
 } from "lucide-react";
 import { Logo } from "@/components/layout/logo";
-
-const links = [
-  { href: "/", label: "Home", icon: Home },
-  { href: "/countries", label: "Countries", icon: Globe },
-  { href: "/submit-update", label: "Submit Update", icon: PlusSquare },
-  { href: "/register-country", label: "Register Country", icon: Library },
-  { href: "/magazine-cover", label: "Magazine Cover", icon: BookImage },
-];
+import { useLocalization } from "@/hooks/use-localization";
 
 export function AppSidebar() {
   const pathname = usePathname();
+  const { t } = useLocalization();
+
+  const links = [
+    { href: "/", label: t('sidebar.home'), icon: Home },
+    { href: "/countries", label: t('sidebar.countries'), icon: Globe },
+    { href: "/submit-update", label: t('sidebar.submitUpdate'), icon: PlusSquare },
+    { href: "/register-country", label: t('sidebar.registerCountry'), icon: Library },
+    { href: "/magazine-cover", label: t('sidebar.magazineCover'), icon: BookImage },
+  ];
 
   return (
     <>

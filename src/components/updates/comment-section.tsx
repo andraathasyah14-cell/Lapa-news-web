@@ -10,11 +10,7 @@ import { addCommentAction } from "@/lib/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-
-const CommentSchema = z.object({
-  author: z.string().min(2, "Name must be at least 2 characters."),
-  content: z.string().min(1, "Comment cannot be empty."),
-});
+import { useLocalization } from "@/hooks/use-localization";
 
 interface CommentSectionProps {
   updateId: string;
@@ -23,14 +19,22 @@ interface CommentSectionProps {
 
 function SubmitButton() {
   const { pending } = useFormStatus();
+  const { t } = useLocalization();
   return (
     <Button size="sm" type="submit" disabled={pending}>
-      {pending ? "Posting..." : "Post Comment"}
+      {pending ? t('commentSection.postButtonPending') : t('commentSection.postButton')}
     </Button>
   );
 }
 
 export function CommentSection({ updateId, comments }: CommentSectionProps) {
+  const { t, locale } = useLocalization();
+
+  const CommentSchema = z.object({
+    author: z.string().min(2, t('validation.authorMin')),
+    content: z.string().min(1, t('validation.commentMin')),
+  });
+
   const [state, formAction] = useActionState(addCommentAction, {
     message: "",
     errors: undefined,
@@ -44,11 +48,15 @@ export function CommentSection({ updateId, comments }: CommentSectionProps) {
   });
 
   useEffect(() => {
-    if (!state?.errors && state?.message !== 'Validation failed.') {
+    if (!state?.errors && state?.message !== 'errors.validationFailed') {
       form.reset();
       formRef.current?.reset();
     }
   }, [state, form]);
+
+   useEffect(() => {
+    form.trigger();
+  }, [locale, form]);
 
   return (
     <div className="space-y-6 pt-4">
@@ -68,21 +76,21 @@ export function CommentSection({ updateId, comments }: CommentSectionProps) {
         ))}
         {comments.length === 0 && (
           <p className="text-sm text-muted-foreground text-center py-4">
-            No comments yet. Be the first to react.
+            {t('commentSection.noComments')}
           </p>
         )}
       </div>
 
       <div>
         <form ref={formRef} action={formAction} className="space-y-4 border-t pt-6">
-          <h4 className="text-md font-semibold">Add a comment</h4>
+          <h4 className="text-md font-semibold">{t('commentSection.addComment')}</h4>
           <input type="hidden" name="updateId" value={updateId} />
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <Input name="author" placeholder="Your Name" className="sm:col-span-1" />
-            <Textarea name="content" placeholder="Share your thoughts..." className="sm:col-span-2" rows={1}/>
+            <Input name="author" placeholder={t('commentSection.namePlaceholder')} className="sm:col-span-1" />
+            <Textarea name="content" placeholder={t('commentSection.commentPlaceholder')} className="sm:col-span-2" rows={1}/>
           </div>
-          {state?.errors?.author && <p className="text-sm text-destructive">{state.errors.author[0]}</p>}
-          {state?.errors?.content && <p className="text-sm text-destructive">{state.errors.content[0]}</p>}
+          {state?.errors?.author && <p className="text-sm text-destructive">{t(state.errors.author[0])}</p>}
+          {state?.errors?.content && <p className="text-sm text-destructive">{t(state.errors.content[0])}</p>}
           <div className="flex justify-end">
             <SubmitButton />
           </div>

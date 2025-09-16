@@ -1,3 +1,6 @@
+
+'use client';
+
 import { getCountries } from "@/lib/data";
 import {
   Table,
@@ -11,20 +14,35 @@ import {
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { PlusCircle } from "lucide-react";
+import { useLocalization } from "@/hooks/use-localization";
+import { useEffect, useState } from "react";
+import type { Country } from "@/lib/definitions";
 
-export default async function CountriesPage() {
-  const countries = await getCountries();
+export default function CountriesPage() {
+  const { t } = useLocalization();
+  const [countries, setCountries] = useState<Country[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchData() {
+      const countriesData = await getCountries();
+      setCountries(countriesData);
+      setLoading(false);
+    }
+    fetchData();
+  }, []);
+
 
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <h1 className="font-headline text-4xl font-bold text-primary md:text-5xl">
-          Registered Nations
+          {t('countries.title')}
         </h1>
         <Button asChild>
           <Link href="/register-country">
             <PlusCircle className="mr-2 h-4 w-4" />
-            Register New
+            {t('countries.registerNew')}
           </Link>
         </Button>
       </div>
@@ -33,20 +51,34 @@ export default async function CountriesPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[40%]">Country Name</TableHead>
-              <TableHead>Owner</TableHead>
+              <TableHead className="w-[40%]">{t('countries.countryNameHeader')}</TableHead>
+              <TableHead>{t('countries.ownerHeader')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {countries.map((country) => (
-              <TableRow key={country.id}>
-                <TableCell className="font-medium">{country.name}</TableCell>
-                <TableCell>{country.owner}</TableCell>
+             {loading ? (
+              <TableRow>
+                <TableCell colSpan={2} className="text-center">
+                  Loading...
+                </TableCell>
               </TableRow>
-            ))}
+            ) : countries.length > 0 ? (
+              countries.map((country) => (
+                <TableRow key={country.id}>
+                  <TableCell className="font-medium">{country.name}</TableCell>
+                  <TableCell>{country.owner}</TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={2} className="text-center">
+                  {t('countries.noCountries')}
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
-          {countries.length === 0 && (
-             <TableCaption>No countries have been registered yet.</TableCaption>
+          {!loading && countries.length === 0 && (
+             <TableCaption>{t('countries.noCountries')}</TableCaption>
           )}
         </Table>
       </div>
