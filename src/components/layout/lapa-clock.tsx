@@ -11,11 +11,14 @@ const LAPA_MONTHS = ["Primus", "Secundus", "Tertius", "Quartus", "Quintus", "Sex
 const LAPA_DAYS_IN_MONTH = 30;
 const LAPA_MONTHS_IN_YEAR = 12;
 
-// Conversion factors based on user's logic
-// 1 Lapa year = 1 Earth month
-// 1 Lapa month = 2.5 Earth days
-// 1 Lapa day = 2 Earth hours
-const LAPA_YEAR_IN_MS = 1000 * 60 * 60 * 24 * 30.4375; // Approx 1 month in ms
+// Conversion factors based on the core rule: 1 Real Month = 1 Lapa Year
+const MS_IN_SECOND = 1000;
+const MS_IN_MINUTE = MS_IN_SECOND * 60;
+const MS_IN_HOUR = MS_IN_MINUTE * 60;
+const MS_IN_DAY = MS_IN_HOUR * 24;
+const AVG_MS_IN_REAL_MONTH = MS_IN_DAY * 30.4375;
+
+const LAPA_YEAR_IN_MS = AVG_MS_IN_REAL_MONTH;
 const LAPA_MONTH_IN_MS = LAPA_YEAR_IN_MS / LAPA_MONTHS_IN_YEAR;
 const LAPA_DAY_IN_MS = LAPA_MONTH_IN_MS / LAPA_DAYS_IN_MONTH;
 const LAPA_HOUR_IN_MS = LAPA_DAY_IN_MS / 24;
@@ -25,14 +28,22 @@ const LAPA_SECOND_IN_MS = LAPA_MINUTE_IN_MS / 60;
 function calculateLapaTime(currentRealDate: Date) {
     const realTimeDiffMs = currentRealDate.getTime() - REAL_WORLD_BASE_DATE.getTime();
 
-    // Total Lapa milliseconds passed since base date
-    const lapaTimeDiffMs = realTimeDiffMs * 12; // Time is 12x faster
-
-    // Calculate Lapa date components
-    const lapaYearsPassed = Math.floor(lapaTimeDiffMs / LAPA_YEAR_IN_MS);
+    if (realTimeDiffMs < 0) {
+        // If current date is before the base date, show the base date/time
+        return {
+            year: LAPA_BASE_YEAR,
+            month: LAPA_MONTHS[0],
+            day: 1,
+            hour: 0,
+            minute: 0,
+            second: 0,
+        };
+    }
+    
+    const lapaYearsPassed = Math.floor(realTimeDiffMs / LAPA_YEAR_IN_MS);
     const lapaCurrentYear = LAPA_BASE_YEAR + lapaYearsPassed;
     
-    const remainderAfterYears = lapaTimeDiffMs % LAPA_YEAR_IN_MS;
+    const remainderAfterYears = realTimeDiffMs % LAPA_YEAR_IN_MS;
     const lapaMonthIndex = Math.floor(remainderAfterYears / LAPA_MONTH_IN_MS);
     const lapaMonth = LAPA_MONTHS[lapaMonthIndex];
 
@@ -62,12 +73,12 @@ export default function LapaClock() {
     const [lapaTime, setLapaTime] = useState({ year: 0, month: '', day: 0, hour: 0, minute: 0, second: 0 });
 
     useEffect(() => {
+        // Set initial time right away
+        setLapaTime(calculateLapaTime(new Date()));
+
         const timer = setInterval(() => {
             setLapaTime(calculateLapaTime(new Date()));
         }, 1000);
-        
-        // Set initial time
-        setLapaTime(calculateLapaTime(new Date()));
 
         return () => clearInterval(timer);
     }, []);
