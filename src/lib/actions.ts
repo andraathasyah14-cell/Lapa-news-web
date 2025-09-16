@@ -36,6 +36,8 @@ export async function registerCountryAction(prevState: any, formData: FormData) 
   redirect("/countries");
 }
 
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
 const UpdateSchema = z.object({
   title: z.string().min(5, "Title must be at least 5 characters."),
@@ -43,7 +45,20 @@ const UpdateSchema = z.object({
   year: z.coerce.number().int().min(1, "Year must be a positive number."),
   countryId: z.string().min(1, "You must select a country."),
   needsMapUpdate: z.preprocess((val) => val === 'on', z.boolean()).optional(),
+  coverImage: z
+    .any()
+    .refine((file) => !file || file.size === 0 || file.size <= MAX_FILE_SIZE, `Max image size is 5MB.`)
+    .refine(
+      (file) => !file || file.size === 0 || ACCEPTED_IMAGE_TYPES.includes(file.type),
+      "Only .jpg, .jpeg, .png and .webp formats are supported."
+    ).optional(),
 });
+
+async function fileToDataUrl(file: File): Promise<string> {
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    return `data:${file.type};base64,${buffer.toString("base64")}`;
+}
 
 export async function submitUpdateAction(prevState: any, formData: FormData) {
   const validatedFields = UpdateSchema.safeParse({
@@ -52,6 +67,7 @@ export async function submitUpdateAction(prevState: any, formData: FormData) {
     year: formData.get("year"),
     countryId: formData.get("countryId"),
     needsMapUpdate: formData.get("needsMapUpdate"),
+    coverImage: formData.get("coverImage"),
   });
 
   if (!validatedFields.success) {
@@ -61,9 +77,22 @@ export async function submitUpdateAction(prevState: any, formData: FormData) {
     };
   }
 
+  const { coverImage: imageFile, ...updateData } = validatedFields.data;
+  let coverImageUrl: string | undefined = undefined;
+
+  if (imageFile && imageFile.size > 0) {
+      try {
+        coverImageUrl = await fileToDataUrl(imageFile);
+      } catch (e) {
+          return { message: "Failed to process image."}
+      }
+  }
+
+
   try {
     await addUpdate({
-      ...validatedFields.data,
+      ...updateData,
+      coverImage: coverImageUrl,
       createdAt: new Date().toISOString(),
     });
   } catch (e) {

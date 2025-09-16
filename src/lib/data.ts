@@ -67,6 +67,7 @@ const data = {
         { id: 'c1', author: 'Bob', content: 'Incredible! The Protectorate is watching with great interest.', createdAt: new Date().toISOString() },
       ],
       needsMapUpdate: true,
+      coverImage: 'https://picsum.photos/seed/u1/800/400'
     },
     {
       id: 'u2',
@@ -74,7 +75,7 @@ const data = {
       content:
         'The Veridian Protectorate has launched an ambitious 50-year plan to reforest the Great Arid Plains. Using advanced hydroponics and resilient seed-strains, the project aims to restore the ancient ecosystem and combat desertification. "This is a gift to our children\'s children," declared the High Protector.',
       countryId: '2',
-      createdAt: new Date('2024-08-05T12:00:00.000Z').toISOString(),
+      createdAt: new Date(new Date().setDate(new Date().getDate() - 2)).toISOString(),
       year: 2024,
       comments: [
         { id: 'c2', author: 'Alice', content: 'A noble cause. Eldoria offers its support.', createdAt: new Date().toISOString() },

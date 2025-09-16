@@ -20,4 +20,5 @@ export type Update = {
   year: number;
   comments: Comment[];
   needsMapUpdate?: boolean;
+  coverImage?: string;
 };

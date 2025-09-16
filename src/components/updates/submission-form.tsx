@@ -30,12 +30,22 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
 
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+
 const UpdateSchema = z.object({
   title: z.string().min(5, "Title must be at least 5 characters."),
   content: z.string().min(20, "Content must be at least 20 characters."),
   year: z.coerce.number().int().min(1, "Year must be a positive number."),
   countryId: z.string().min(1, "You must select a country."),
   needsMapUpdate: z.boolean().default(false).optional(),
+  coverImage: z
+    .any()
+    .refine((file) => !file || file.size <= MAX_FILE_SIZE, `Max image size is 5MB.`)
+    .refine(
+      (file) => !file || ACCEPTED_IMAGE_TYPES.includes(file.type),
+      "Only .jpg, .jpeg, .png and .webp formats are supported."
+    ).optional(),
 });
 
 
@@ -113,6 +123,19 @@ export default function UpdateSubmissionForm({ countries }: { countries: Country
               <FormLabel>Update Title</FormLabel>
               <FormControl>
                 <Input placeholder="e.g., Economic Boom in the Western Provinces" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="coverImage"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Cover Image (Optional)</FormLabel>
+              <FormControl>
+                <Input type="file" accept="image/*" onChange={(e) => field.onChange(e.target.files?.[0])} />
               </FormControl>
               <FormMessage />
             </FormItem>

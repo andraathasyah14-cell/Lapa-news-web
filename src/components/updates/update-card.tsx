@@ -1,6 +1,7 @@
 
 'use client';
 
+import Image from "next/image";
 import type { Update, Country } from "@/lib/definitions";
 import {
   Card,
@@ -34,6 +35,18 @@ export function UpdateCard({ update, country }: UpdateCardProps) {
 
   return (
     <Card className="overflow-hidden border-accent bg-card/90 backdrop-blur-sm">
+      {update.coverImage && (
+        <div className="aspect-video relative w-full">
+            <Image 
+                src={update.coverImage} 
+                alt={update.title} 
+                fill 
+                className="object-cover"
+                data-ai-hint="news story" 
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            />
+        </div>
+      )}
       <CardHeader>
         <div className="flex justify-between items-start">
             <CardDescription className="text-card-foreground/80">
