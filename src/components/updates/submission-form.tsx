@@ -27,12 +27,14 @@ import {
 } from "@/components/ui/select";
 import { useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const UpdateSchema = z.object({
   title: z.string().min(5, "Title must be at least 5 characters."),
   content: z.string().min(20, "Content must be at least 20 characters."),
   year: z.coerce.number().int().min(1, "Year must be a positive number."),
   countryId: z.string().min(1, "You must select a country."),
+  needsMapUpdate: z.boolean().default(false).optional(),
 });
 
 function SubmitButton() {
@@ -58,6 +60,7 @@ export default function UpdateSubmissionForm({ countries }: { countries: Country
       content: "",
       year: new Date().getFullYear(),
       countryId: "",
+      needsMapUpdate: false,
     },
     mode: 'onChange'
   });
@@ -139,6 +142,25 @@ export default function UpdateSubmissionForm({ countries }: { countries: Country
                 <Input type="number" {...field} />
               </FormControl>
               <FormMessage />
+            </FormItem>
+          )}
+        />
+         <FormField
+          control={form.control}
+          name="needsMapUpdate"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-4">
+               <FormControl>
+                <Checkbox
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              </FormControl>
+              <div className="space-y-1 leading-none">
+                <FormLabel>
+                  Does this update change the world map?
+                </FormLabel>
+              </div>
             </FormItem>
           )}
         />

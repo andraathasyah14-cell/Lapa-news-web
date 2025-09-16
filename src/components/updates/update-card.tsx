@@ -14,7 +14,8 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { CommentSection } from "@/components/updates/comment-section";
-import { MessageSquare } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { MessageSquare, Map } from "lucide-react";
 
 interface UpdateCardProps {
   update: Update;
@@ -31,9 +32,17 @@ export function UpdateCard({ update, country }: UpdateCardProps) {
   return (
     <Card className="overflow-hidden border-accent bg-accent/5">
       <CardHeader>
-        <CardDescription>
-          From <span className="font-semibold text-primary">{country?.name || 'An unknown nation'}</span> &bull; {formattedDate} &bull; Year {update.year}
-        </CardDescription>
+        <div className="flex justify-between items-start">
+            <CardDescription>
+                From <span className="font-semibold text-primary">{country?.name || 'An unknown nation'}</span> &bull; {formattedDate} &bull; Year {update.year}
+            </CardDescription>
+            {update.needsMapUpdate && (
+                <Badge variant="destructive" className="flex items-center gap-1">
+                    <Map className="h-3 w-3" />
+                    <span>Need Map Update</span>
+                </Badge>
+            )}
+        </div>
         <CardTitle className="font-headline text-3xl text-primary">{update.title}</CardTitle>
       </CardHeader>
       <CardContent>

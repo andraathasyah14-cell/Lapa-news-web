@@ -31,6 +31,7 @@ const data = {
       comments: [
         { id: 'c1', author: 'Bob', content: 'Incredible! The Protectorate is watching with great interest.', createdAt: new Date().toISOString() },
       ],
+      needsMapUpdate: true,
     },
     {
       id: 'u2',
@@ -44,6 +45,7 @@ const data = {
         { id: 'c2', author: 'Alice', content: 'A noble cause. Eldoria offers its support.', createdAt: new Date().toISOString() },
         { id: 'c3', author: 'Charlie', content: 'The Empire questions the resource allocation for such a long-term venture.', createdAt: new Date().toISOString() },
       ],
+      needsMapUpdate: true,
     },
      {
       id: 'u3',

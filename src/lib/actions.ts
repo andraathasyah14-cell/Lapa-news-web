@@ -41,6 +41,7 @@ const UpdateSchema = z.object({
   content: z.string().min(20, { message: "Content must be at least 20 characters." }),
   year: z.coerce.number().int().min(1, { message: "Year must be a positive number." }),
   countryId: z.string().min(1, { message: "You must select a country." }),
+  needsMapUpdate: z.preprocess((val) => val === 'on', z.boolean().default(false).optional()),
 });
 
 export async function submitUpdateAction(prevState: any, formData: FormData) {
@@ -49,6 +50,7 @@ export async function submitUpdateAction(prevState: any, formData: FormData) {
     content: formData.get("content"),
     year: formData.get("year"),
     countryId: formData.get("countryId"),
+    needsMapUpdate: formData.get("needsMapUpdate"),
   });
 
   if (!validatedFields.success) {

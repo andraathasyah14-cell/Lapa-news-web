@@ -19,4 +19,5 @@ export type Update = {
   createdAt: string; // ISO String
   year: number;
   comments: Comment[];
+  needsMapUpdate?: boolean;
 };
