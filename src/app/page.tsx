@@ -6,6 +6,7 @@ import { UpdateCard } from '@/components/updates/update-card';
 import RegistrationAlert from '@/components/updates/registration-alert';
 import type { Update, Country } from '@/lib/definitions';
 import { getTranslations } from '@/lib/get-translations';
+import DeveloperCreditAlert from '@/components/layout/developer-credit-alert';
 
 export default async function Home() {
   const t = await getTranslations();
@@ -16,6 +17,7 @@ export default async function Home() {
 
   return (
     <div className="space-y-8">
+      <DeveloperCreditAlert />
       <RegistrationAlert />
       <h1 className="font-headline text-4xl font-bold text-primary md:text-5xl">
         {t('home.title')}
