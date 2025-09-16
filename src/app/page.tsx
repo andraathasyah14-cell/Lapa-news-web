@@ -3,7 +3,6 @@
 
 import { getCountries, getUpdates } from '@/lib/data';
 import { UpdateCard } from '@/components/updates/update-card';
-import RegistrationAlert from '@/components/updates/registration-alert';
 import type { Update, Country } from '@/lib/definitions';
 import DeveloperCreditAlert from '@/components/layout/developer-credit-alert';
 import LapaClock from '@/components/layout/lapa-clock';
@@ -18,7 +17,6 @@ export default async function Home() {
     <div className="space-y-8">
       <DeveloperCreditAlert />
       <LapaClock />
-      <RegistrationAlert />
       <h1 className="font-headline text-4xl font-bold text-primary md:text-5xl">
         Global Update Feed
       </h1>
