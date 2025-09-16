@@ -28,7 +28,7 @@ export function AppSidebar() {
     { href: "/", label: "Home", icon: Home, locked: false },
     { href: "/countries", label: "Countries", icon: Globe, locked: false },
     { href: "/submit-update", label: "Submit Update", icon: PlusSquare, locked: true },
-    { href: "/register-country", label: "Register Country", icon: Library, locked: true },
+    { href: "/register-country", label: "Register Country", icon: Library, locked: false },
     { href: "/magazine-cover", label: "Magazine Cover", icon: BookImage, locked: true },
     { href: "/info", label: "Important Info", icon: Info, locked: false },
   ];
