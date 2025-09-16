@@ -27,16 +27,31 @@ const data = {
       id: '5',
       name: 'ZVENO',
       owner: 'System',
+    },
+    {
+      id: '6',
+      name: 'Rumelia',
+      owner: 'System',
     }
   ] as Country[],
   updates: [
+    {
+      id: 'u5',
+      countryId: '6',
+      title: 'Mengenal Direktorat Keamanan Negara, Badan Kepolisian Rahasia Rumelia',
+      content: 'Miljacka- layaknya negara pada umumnya, Rumelia mempunyai seperangkat alat keamanan untuk mengamankan negaranya dari ancaman baik internal atau pun eksternal. Kali ini Rumelia People Daily akan membahas mengenai Direktorat Keamanan Negara atau Directorate for Security State atau dalam bahasa Slavony dikenal sebagai Uprava državne bezbednosti (UDBA). Sementara itu kalangan masyarakat umum menyebutnya sebagai State Security Service (S-3). UDBA adalah badan organisasi kepolisian rahasia dari Republik Federasi Sosialis Rumelia yang dibentuk pada masa awal pemerintahan Tito dan berjalan hingga sekarang. UDBA berada dibawah kendali Kementrian urusan dalam negeri Rumelia. Selain itu, UDBA juga memiliki sejumlah fungsi selain polisi rahasia antara lain yaitu sebagai Gendarmerie (Internal Troops), Badan Intelijen, Penjaga Perbatasan, badan penegakkan hukum, dan otoritas kamp konsentrasi. Saat ini jumlah total anggota UDBA masih dirahasiakan dan tidak dipublikasikan akan tetapi anggota UDBA yang bertugas sebagai Pasukan Internal (Gendarmerie) diperkirakan mencapai 200-300 ribu orang mereka bertugas sebagai paramiliter bantu (Auxillary) bagi badan kepolisian Rumelia. Inti utama organisasi ini pada bagian intelejen dan kepolisian rahasia. Kedua fungsi ini bertugas untuk menetralisir apapun yang dianggap sebagai ancaman internal bagi Pemerintahan Rumelia.',
+      year: new Date().getFullYear(),
+      createdAt: new Date().toISOString(),
+      comments: [],
+      needsMapUpdate: false,
+    },
     {
       id: 'u4',
       countryId: '5',
       title: 'ZVENO Fast News ™: Akademisi Mengecam Rencana Holubia',
       content: 'Sebuah petisi yang ditandatangani oleh 11.000 akademisi terkait hubungan internasional yang berhasil terkumpul hanya dalam 15 menit menghasilkan tekanan untuk pemerintah agar melakukan pengecaman terhadap rencana Republik Holubia. Pernyataan itu diperkuat dengan video argumen dari seorang pakar ekologi dari Universitas Negeri Renastol yang menekankan adanya pertimbangan atas 1001 kerusakan yang ditimbulkannya.',
       year: new Date().getFullYear(),
-      createdAt: new Date().toISOString(),
+      createdAt: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString(),
       comments: [],
       needsMapUpdate: false,
     },
@@ -46,7 +61,7 @@ const data = {
       content:
         'Scientists in Eldoria have perfected the art of sky-sailing, using lighter-than-air ships to navigate the upper atmosphere. This new technology promises to revolutionize trade and travel across the continent, opening up previously inaccessible mountain regions. The first commercial routes are expected to launch by year\'s end.',
       countryId: '1',
-      createdAt: new Date(new Date().setDate(new Date().getDate() - 2)).toISOString(),
+      createdAt: new Date(new Date().setDate(new Date().getDate() - 3)).toISOString(),
       year: 2024,
       comments: [
         { id: 'c1', author: 'Bob', content: 'Incredible! The Protectorate is watching with great interest.', createdAt: new Date().toISOString() },
@@ -59,7 +74,7 @@ const data = {
       content:
         'The Veridian Protectorate has launched an ambitious 50-year plan to reforest the Great Arid Plains. Using advanced hydroponics and resilient seed-strains, the project aims to restore the ancient ecosystem and combat desertification. "This is a gift to our children\'s children," declared the High Protector.',
       countryId: '2',
-      createdAt: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString(),
+      createdAt: new Date('2024-08-05T12:00:00.000Z').toISOString(),
       year: 2024,
       comments: [
         { id: 'c2', author: 'Alice', content: 'A noble cause. Eldoria offers its support.', createdAt: new Date().toISOString() },
@@ -73,7 +88,7 @@ const data = {
       content:
         'The Crystalian Empire has activated the first phase of its continent-spanning geothermal power grid. Tapping into the volcanic activity of the Dragon\'s Tooth mountain range, the new grid provides clean, near-limitless energy to its heartland provinces. Imperial engineers claim this will usher in a new age of industry and prosperity.',
       countryId: '3',
-      createdAt: new Date().toISOString(),
+      createdAt: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString(),
       year: 2024,
       comments: [],
       needsMapUpdate: false,
