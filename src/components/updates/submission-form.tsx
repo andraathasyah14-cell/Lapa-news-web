@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useActionState, useEffect } from "react";
@@ -41,7 +42,7 @@ function SubmitButton() {
 }
 
 export default function UpdateSubmissionForm({ countries }: { countries: Country[] }) {
-  const { t, locale } = useLocalization();
+  const { t } = useLocalization();
   
   const UpdateSchema = z.object({
     title: z.string().min(5, t('validation.titleMin')),
@@ -78,11 +79,6 @@ export default function UpdateSubmissionForm({ countries }: { countries: Country
       });
     }
   }, [state, toast, t]);
-
-  useEffect(() => {
-    form.trigger();
-  }, [locale, form]);
-
 
   return (
     <Form {...form}>
