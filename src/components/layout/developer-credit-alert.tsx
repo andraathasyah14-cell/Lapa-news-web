@@ -31,15 +31,15 @@ export default function DeveloperCreditAlert() {
   }
 
   return (
-    <Alert className="bg-card/80 border-card-foreground/20 relative pr-12 text-card-foreground">
+    <Alert className="bg-card/80 border-accent/50 relative pr-12 text-card-foreground backdrop-blur-sm">
         <div className="flex items-center gap-4">
             <Avatar className="h-12 w-12 border-2 border-primary/50">
-                <div className="bg-primary/20 w-full h-full flex items-center justify-center">
+                <div className="bg-primary/10 w-full h-full flex items-center justify-center">
                     <UserIcon className="h-8 w-8 text-primary" />
                 </div>
             </Avatar>
             <div>
-                <AlertTitle className="font-headline text-lg">Developed by Andra</AlertTitle>
+                <AlertTitle className="font-headline text-lg text-primary">Developed by Andra</AlertTitle>
                 <AlertDescription className="text-card-foreground/80">
                     Welcome to the app! Hope you enjoy your stay.
                 </AlertDescription>
@@ -48,7 +48,7 @@ export default function DeveloperCreditAlert() {
       <Button
         variant="ghost"
         size="icon"
-        className="absolute top-2 right-2 h-6 w-6 text-card-foreground/80 hover:text-card-foreground"
+        className="absolute top-2 right-2 h-6 w-6 text-card-foreground/60 hover:text-card-foreground"
         onClick={handleDismiss}
       >
         <X className="h-4 w-4" />

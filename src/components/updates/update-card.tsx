@@ -34,14 +34,14 @@ export function UpdateCard({ update, country }: UpdateCardProps) {
   });
 
   return (
-    <Card className="overflow-hidden border-accent bg-card/90 backdrop-blur-sm">
+    <Card className="overflow-hidden border-accent/50 bg-card/80 backdrop-blur-sm transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-1 group">
       {update.coverImage && (
-        <div className="aspect-video relative w-full">
+        <div className="aspect-video relative w-full overflow-hidden">
             <Image 
                 src={update.coverImage} 
                 alt={update.title} 
                 fill 
-                className="object-cover"
+                className="object-cover transition-transform duration-300 group-hover:scale-105"
                 data-ai-hint="news story" 
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
@@ -53,24 +53,24 @@ export function UpdateCard({ update, country }: UpdateCardProps) {
                 From <span className="font-semibold text-card-foreground">{country?.name || "An unknown nation"}</span> &bull; {formattedDate} &bull; Year {update.year}
             </CardDescription>
             {update.needsMapUpdate && (
-                <Badge variant="destructive" className="flex items-center gap-1">
+                <Badge variant="destructive" className="flex items-center gap-1.5 py-1 px-2.5">
                     <Map className="h-3 w-3" />
-                    <span>Need Map Update</span>
+                    <span>Map Update</span>
                 </Badge>
             )}
         </div>
-        <CardTitle className="font-headline text-3xl text-card-foreground">{update.title}</CardTitle>
+        <CardTitle className="font-headline text-3xl text-primary">{update.title}</CardTitle>
       </CardHeader>
       <CardContent>
-        <p className="text-card-foreground/90 leading-relaxed">{update.content}</p>
+        <p className="text-card-foreground/90 leading-relaxed whitespace-pre-wrap">{update.content}</p>
       </CardContent>
       <CardFooter>
         <Accordion type="single" collapsible className="w-full">
-          <AccordionItem value="comments" className="border-t border-b-0">
-            <AccordionTrigger>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <AccordionItem value="comments" className="border-t border-border/50">
+            <AccordionTrigger className="hover:no-underline">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
                 <MessageSquare className="h-4 w-4" />
-                <span>Comments ({update.comments.length})</span>
+                <span>View Comments ({update.comments.length})</span>
               </div>
             </AccordionTrigger>
             <AccordionContent>
