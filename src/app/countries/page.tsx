@@ -45,7 +45,11 @@ export default async function CountriesPage() {
              {countries.length > 0 ? (
               countries.map((country) => (
                 <TableRow key={country.id}>
-                  <TableCell className="font-medium">{country.name}</TableCell>
+                  <TableCell className="font-medium">
+                    <Link href={`/countries/${country.id}`} className="hover:underline text-primary/90 hover:text-primary font-semibold">
+                      {country.name}
+                    </Link>
+                  </TableCell>
                   <TableCell>{country.owner}</TableCell>
                 </TableRow>
               ))

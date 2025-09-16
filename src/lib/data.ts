@@ -122,6 +122,12 @@ export async function getUpdates(): Promise<Update[]> {
   return [...data.updates].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 }
 
+export async function getUpdatesByCountryId(countryId: string): Promise<Update[]> {
+  await delay(100);
+  const allUpdates = await getUpdates();
+  return allUpdates.filter(update => update.countryId === countryId);
+}
+
 export async function getUpdateById(id: string): Promise<Update | undefined> {
   await delay(50);
   return data.updates.find(u => u.id === id);
