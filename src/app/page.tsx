@@ -1,44 +1,18 @@
 
-'use client';
+'use server';
 
 import { getCountries, getUpdates } from '@/lib/data';
 import { UpdateCard } from '@/components/updates/update-card';
 import RegistrationAlert from '@/components/updates/registration-alert';
-import { useLocalization } from '@/hooks/use-localization';
 import type { Update, Country } from '@/lib/definitions';
-import { useEffect, useState } from 'react';
+import { getTranslations } from '@/lib/get-translations';
 
-export default function Home() {
-  const { t } = useLocalization();
-  const [updates, setUpdates] = useState<Update[]>([]);
-  const [countries, setCountries] = useState<Country[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchData() {
-      const [updatesData, countriesData] = await Promise.all([
-        getUpdates(),
-        getCountries(),
-      ]);
-      setUpdates(updatesData);
-      setCountries(countriesData);
-      setLoading(false);
-    }
-    fetchData();
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="space-y-8">
-        <h1 className="font-headline text-4xl font-bold text-primary md:text-5xl">
-          {t('home.title')}
-        </h1>
-        <div className="text-center text-muted-foreground py-16">
-          <p>Loading...</p>
-        </div>
-      </div>
-    );
-  }
+export default async function Home() {
+  const t = await getTranslations();
+  const [updates, countries] = await Promise.all([
+    getUpdates(),
+    getCountries(),
+  ]);
 
   return (
     <div className="space-y-8">

@@ -1,5 +1,5 @@
 
-'use client';
+'use server';
 
 import { getCountries } from "@/lib/data";
 import {
@@ -14,24 +14,12 @@ import {
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { PlusCircle } from "lucide-react";
-import { useLocalization } from "@/hooks/use-localization";
-import { useEffect, useState } from "react";
+import { getTranslations } from "@/lib/get-translations";
 import type { Country } from "@/lib/definitions";
 
-export default function CountriesPage() {
-  const { t } = useLocalization();
-  const [countries, setCountries] = useState<Country[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchData() {
-      const countriesData = await getCountries();
-      setCountries(countriesData);
-      setLoading(false);
-    }
-    fetchData();
-  }, []);
-
+export default async function CountriesPage() {
+  const t = await getTranslations();
+  const countries: Country[] = await getCountries();
 
   return (
     <div className="space-y-8">
@@ -56,13 +44,7 @@ export default function CountriesPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-             {loading ? (
-              <TableRow>
-                <TableCell colSpan={2} className="text-center">
-                  Loading...
-                </TableCell>
-              </TableRow>
-            ) : countries.length > 0 ? (
+             {countries.length > 0 ? (
               countries.map((country) => (
                 <TableRow key={country.id}>
                   <TableCell className="font-medium">{country.name}</TableCell>
@@ -77,7 +59,7 @@ export default function CountriesPage() {
               </TableRow>
             )}
           </TableBody>
-          {!loading && countries.length === 0 && (
+          {countries.length === 0 && (
              <TableCaption>{t('countries.noCountries')}</TableCaption>
           )}
         </Table>

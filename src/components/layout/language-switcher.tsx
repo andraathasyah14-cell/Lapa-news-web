@@ -12,13 +12,22 @@ import { Globe } from "lucide-react";
 import { useLocalization, type Locale } from "@/hooks/use-localization";
 import { useAtomValue } from "jotai";
 import { localeAtom } from "@/hooks/use-localization";
+import { usePathname, useRouter } from "next/navigation";
+import Cookies from 'js-cookie';
 
 export default function LanguageSwitcher() {
   const { setLocale, t } = useLocalization();
   const locale = useAtomValue(localeAtom);
+  const router = useRouter();
+  const pathname = usePathname();
 
   const handleLanguageChange = (lang: string) => {
-    setLocale(lang as Locale);
+    const newLocale = lang as Locale;
+    setLocale(newLocale);
+    // Set a cookie that the server can read
+    Cookies.set('locale', newLocale, { expires: 365 });
+    // Refresh the page to re-fetch server components with the new locale
+    router.refresh();
   };
 
   return (

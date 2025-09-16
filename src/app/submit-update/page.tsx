@@ -1,25 +1,14 @@
 
-'use client';
+'use server';
 import UpdateSubmissionForm from "@/components/updates/submission-form";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getCountries } from "@/lib/data";
-import { useLocalization } from "@/hooks/use-localization";
-import { useEffect, useState } from "react";
+import { getTranslations } from "@/lib/get-translations";
 import type { Country } from "@/lib/definitions";
 
-export default function SubmitUpdatePage() {
-    const { t } = useLocalization();
-    const [countries, setCountries] = useState<Country[]>([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        async function fetchCountries() {
-            const data = await getCountries();
-            setCountries(data);
-            setLoading(false);
-        }
-        fetchCountries();
-    }, []);
+export default async function SubmitUpdatePage() {
+    const t = await getTranslations();
+    const countries: Country[] = await getCountries();
 
     return (
         <div className="max-w-2xl mx-auto">
@@ -34,7 +23,7 @@ export default function SubmitUpdatePage() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    {loading ? <p>Loading countries...</p> : <UpdateSubmissionForm countries={countries} />}
+                    <UpdateSubmissionForm countries={countries} />
                 </CardContent>
             </Card>
         </div>
