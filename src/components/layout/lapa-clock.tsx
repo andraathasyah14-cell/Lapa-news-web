@@ -7,18 +7,19 @@ import { Clock } from 'lucide-react';
 // Fictional world time parameters
 const REAL_WORLD_BASE_DATE = new Date('2025-01-01T00:00:00Z');
 const LAPA_BASE_YEAR = 2080;
-const LAPA_MONTHS = ["Primus", "Secundus", "Tertius", "Quartus", "Quintus", "Sextus", "Septimus", "Octavus", "Nonus", "Decimus", "Undecimus", "Duodecimus"];
+const LAPA_MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const LAPA_DAYS_IN_MONTH = 30;
 const LAPA_MONTHS_IN_YEAR = 12;
 
-// Conversion factors based on: 1 Earth Month = 1 Lapa Year
-const LAPA_DAY_IN_MS = 2 * 60 * 60 * 1000; // 1 Lapa Day = 2 Earth Hours
-const LAPA_MONTH_IN_MS = LAPA_DAY_IN_MS * LAPA_DAYS_IN_MONTH; // 1 Lapa Month = 2.5 Earth Days
-const LAPA_YEAR_IN_MS = LAPA_MONTH_IN_MS * LAPA_MONTHS_IN_YEAR; // 1 Lapa Year = 30 Earth Days
+// Conversion factors based on: 1 Lapa Day = 2 Earth Hours
+const LAPA_SECOND_IN_MS = (2 * 60 * 60 * 1000) / (24 * 60 * 60); // ~0.083 Earth seconds
+const LAPA_MINUTE_IN_MS = LAPA_SECOND_IN_MS * 60; // ~5 Earth seconds
+const LAPA_HOUR_IN_MS = LAPA_MINUTE_IN_MS * 60; // 5 Earth minutes
+const LAPA_DAY_IN_MS = LAPA_HOUR_IN_MS * 24; // 2 Earth hours
 
-const LAPA_HOUR_IN_MS = LAPA_DAY_IN_MS / 24; // 1 Lapa Hour = 5 Earth Minutes
-const LAPA_MINUTE_IN_MS = LAPA_HOUR_IN_MS / 60; // 1 Lapa Minute = 5 Earth Seconds
-const LAPA_SECOND_IN_MS = LAPA_MINUTE_IN_MS / 60; // 1 Lapa Second = ~0.083 Earth Seconds
+const LAPA_MONTH_IN_MS = LAPA_DAY_IN_MS * LAPA_DAYS_IN_MONTH; // 2.5 Earth days
+const LAPA_YEAR_IN_MS = LAPA_MONTH_IN_MS * LAPA_MONTHS_IN_YEAR; // 30 Earth days
+
 
 function calculateLapaTime(currentRealDate: Date) {
     const realTimeDiffMs = currentRealDate.getTime() - REAL_WORLD_BASE_DATE.getTime();
