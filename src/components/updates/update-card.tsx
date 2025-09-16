@@ -2,6 +2,7 @@
 'use client';
 
 import Image from "next/image";
+import { useState, useMemo } from "react";
 import type { Update, Country } from "@/lib/definitions";
 import {
   Card,
@@ -21,18 +22,32 @@ import { CommentSection } from "@/components/updates/comment-section";
 import { Badge } from "@/components/ui/badge";
 import { MessageSquare, Map } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "../ui/button";
 
 interface UpdateCardProps extends React.HTMLAttributes<HTMLDivElement> {
   update: Update;
   country?: Country;
 }
 
+const TRUNCATE_LENGTH = 300;
+
 export function UpdateCard({ update, country, className, ...props }: UpdateCardProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  
   const formattedDate = new Date(update.createdAt).toLocaleDateString("en-US", {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
   });
+
+  const isLongContent = update.content.length > TRUNCATE_LENGTH;
+
+  const displayedContent = useMemo(() => {
+    if (!isLongContent || isExpanded) {
+      return update.content;
+    }
+    return `${update.content.substring(0, TRUNCATE_LENGTH)}...`;
+  }, [isExpanded, update.content, isLongContent]);
 
   return (
     <Card 
@@ -65,8 +80,13 @@ export function UpdateCard({ update, country, className, ...props }: UpdateCardP
         </div>
         <CardTitle className="font-headline text-3xl text-primary">{update.title}</CardTitle>
       </CardHeader>
-      <CardContent>
-        <p className="text-card-foreground/90 leading-relaxed whitespace-pre-wrap">{update.content}</p>
+      <CardContent className="space-y-4">
+        <p className="text-card-foreground/90 leading-relaxed whitespace-pre-wrap">{displayedContent}</p>
+        {isLongContent && (
+            <Button variant="link" onClick={() => setIsExpanded(!isExpanded)} className="p-0 h-auto text-primary hover:text-primary/80">
+                {isExpanded ? "Read Less" : "Read More"}
+            </Button>
+        )}
       </CardContent>
       <CardFooter>
         <Accordion type="single" collapsible className="w-full">
