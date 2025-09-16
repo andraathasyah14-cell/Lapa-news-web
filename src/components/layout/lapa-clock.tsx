@@ -6,19 +6,19 @@ import { Clock } from 'lucide-react';
 
 // Fictional world time parameters
 const REAL_WORLD_BASE_DATE = new Date('2025-01-01T00:00:00Z');
-const LAPA_BASE_YEAR = 0;
+const LAPA_BASE_YEAR = 2080;
 const LAPA_MONTHS = ["Primus", "Secundus", "Tertius", "Quartus", "Quintus", "Sextus", "Septimus", "Octavus", "Nonus", "Decimus", "Undecimus", "Duodecimus"];
 const LAPA_DAYS_IN_MONTH = 30;
 const LAPA_MONTHS_IN_YEAR = 12;
 
-// Conversion factors based on: 1 Lapa Day = 2 Earth Hours
-const LAPA_DAY_IN_MS = 2 * 60 * 60 * 1000; // 7,200,000 ms
-const LAPA_MONTH_IN_MS = LAPA_DAY_IN_MS * LAPA_DAYS_IN_MONTH; // 216,000,000 ms
-const LAPA_YEAR_IN_MS = LAPA_MONTH_IN_MS * LAPA_MONTHS_IN_YEAR; // 2,592,000,000 ms
+// Conversion factors based on: 1 Earth Month = 1 Lapa Year
+const LAPA_DAY_IN_MS = 2 * 60 * 60 * 1000; // 1 Lapa Day = 2 Earth Hours
+const LAPA_MONTH_IN_MS = LAPA_DAY_IN_MS * LAPA_DAYS_IN_MONTH; // 1 Lapa Month = 2.5 Earth Days
+const LAPA_YEAR_IN_MS = LAPA_MONTH_IN_MS * LAPA_MONTHS_IN_YEAR; // 1 Lapa Year = 30 Earth Days
 
-const LAPA_HOUR_IN_MS = LAPA_DAY_IN_MS / 24; // 300,000 ms (5 Earth minutes)
-const LAPA_MINUTE_IN_MS = LAPA_HOUR_IN_MS / 60; // 5,000 ms (5 Earth seconds)
-const LAPA_SECOND_IN_MS = LAPA_MINUTE_IN_MS / 60; // ~83.33 ms
+const LAPA_HOUR_IN_MS = LAPA_DAY_IN_MS / 24; // 1 Lapa Hour = 5 Earth Minutes
+const LAPA_MINUTE_IN_MS = LAPA_HOUR_IN_MS / 60; // 1 Lapa Minute = 5 Earth Seconds
+const LAPA_SECOND_IN_MS = LAPA_MINUTE_IN_MS / 60; // 1 Lapa Second = ~0.083 Earth Seconds
 
 function calculateLapaTime(currentRealDate: Date) {
     const realTimeDiffMs = currentRealDate.getTime() - REAL_WORLD_BASE_DATE.getTime();
@@ -34,16 +34,20 @@ function calculateLapaTime(currentRealDate: Date) {
         };
     }
     
-    const lapaYearsPassed = Math.floor(realTimeDiffMs / LAPA_YEAR_IN_MS);
-    const lapaCurrentYear = LAPA_BASE_YEAR + lapaYearsPassed;
+    // Calculate total Lapa years passed
+    const totalLapaYearsPassed = Math.floor(realTimeDiffMs / LAPA_YEAR_IN_MS);
+    const lapaCurrentYear = LAPA_BASE_YEAR + totalLapaYearsPassed;
     
+    // Calculate remainder for months
     const remainderAfterYears = realTimeDiffMs % LAPA_YEAR_IN_MS;
     const lapaMonthIndex = Math.floor(remainderAfterYears / LAPA_MONTH_IN_MS);
     const lapaMonth = LAPA_MONTHS[lapaMonthIndex];
 
+    // Calculate remainder for days
     const remainderAfterMonths = remainderAfterYears % LAPA_MONTH_IN_MS;
     const lapaDay = Math.floor(remainderAfterMonths / LAPA_DAY_IN_MS) + 1;
 
+    // Calculate remainder for time
     const remainderAfterDays = remainderAfterMonths % LAPA_DAY_IN_MS;
     const lapaHour = Math.floor(remainderAfterDays / LAPA_HOUR_IN_MS);
     
