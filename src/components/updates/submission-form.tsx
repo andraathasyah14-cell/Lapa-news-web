@@ -146,7 +146,7 @@ export default function UpdateSubmissionForm({ countries }: { countries: Country
                 <Input type="number" {...field} />
               </FormControl>
               <FormMessage />
-            </FormMItem>
+            </FormItem>
           )}
         />
          <FormField
