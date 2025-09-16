@@ -18,8 +18,28 @@ const data = {
       name: 'Crystalian Empire',
       owner: 'Charlie',
     },
+    {
+      id: '4',
+      name: 'Republik Holubia',
+      owner: 'System',
+    },
+    {
+      id: '5',
+      name: 'ZVENO',
+      owner: 'System',
+    }
   ] as Country[],
   updates: [
+    {
+      id: 'u4',
+      countryId: '5',
+      title: 'ZVENO Fast News ™: Akademisi Mengecam Rencana Holubia',
+      content: 'Sebuah petisi yang ditandatangani oleh 11.000 akademisi terkait hubungan internasional yang berhasil terkumpul hanya dalam 15 menit menghasilkan tekanan untuk pemerintah agar melakukan pengecaman terhadap rencana Republik Holubia. Pernyataan itu diperkuat dengan video argumen dari seorang pakar ekologi dari Universitas Negeri Renastol yang menekankan adanya pertimbangan atas 1001 kerusakan yang ditimbulkannya.',
+      year: new Date().getFullYear(),
+      createdAt: new Date().toISOString(),
+      comments: [],
+      needsMapUpdate: false,
+    },
     {
       id: 'u1',
       title: 'The Eldorian Sky-Sail Breakthrough',
