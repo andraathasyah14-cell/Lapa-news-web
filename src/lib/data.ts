@@ -56,6 +56,7 @@ const data = {
       createdAt: new Date().toISOString(),
       year: 2024,
       comments: [],
+      needsMapUpdate: false,
     },
   ] as Update[],
 };
@@ -75,7 +76,7 @@ export async function getCountryById(id: string): Promise<Country | undefined> {
 
 export async function addCountry(country: Omit<Country, 'id'>) {
   await delay(200);
-  const newCountry = { ...country, id: (data.countries.length + 1).toString() };
+  const newCountry = { ...country, id: `c${Date.now()}` };
   data.countries.push(newCountry);
   return newCountry;
 }
@@ -92,7 +93,7 @@ export async function getUpdateById(id: string): Promise<Update | undefined> {
 
 export async function addUpdate(update: Omit<Update, 'id' | 'comments'>) {
   await delay(200);
-  const newUpdate = { ...update, id: `u${data.updates.length + 1}`, comments: [] };
+  const newUpdate = { ...update, id: `u${Date.now()}`, comments: [] };
   data.updates.push(newUpdate);
   return newUpdate;
 }
