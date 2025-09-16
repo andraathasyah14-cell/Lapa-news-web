@@ -11,26 +11,42 @@ const LAPA_MONTHS = ["Primus", "Secundus", "Tertius", "Quartus", "Quintus", "Sex
 const LAPA_DAYS_IN_MONTH = 30;
 const LAPA_MONTHS_IN_YEAR = 12;
 
+// Conversion factors based on user's logic
+// 1 Lapa year = 1 Earth month
+// 1 Lapa month = 2.5 Earth days
+// 1 Lapa day = 2 Earth hours
+const LAPA_YEAR_IN_MS = 1000 * 60 * 60 * 24 * 30.4375; // Approx 1 month in ms
+const LAPA_MONTH_IN_MS = LAPA_YEAR_IN_MS / LAPA_MONTHS_IN_YEAR;
+const LAPA_DAY_IN_MS = LAPA_MONTH_IN_MS / LAPA_DAYS_IN_MONTH;
+const LAPA_HOUR_IN_MS = LAPA_DAY_IN_MS / 24;
+const LAPA_MINUTE_IN_MS = LAPA_HOUR_IN_MS / 60;
+const LAPA_SECOND_IN_MS = LAPA_MINUTE_IN_MS / 60;
+
 function calculateLapaTime(currentRealDate: Date) {
     const realTimeDiffMs = currentRealDate.getTime() - REAL_WORLD_BASE_DATE.getTime();
-    
-    const realMonthsPassed = realTimeDiffMs / (1000 * 60 * 60 * 24 * 30.4375); // Average days in a month
-    const lapaYearsPassed = Math.floor(realMonthsPassed);
 
+    // Total Lapa milliseconds passed since base date
+    const lapaTimeDiffMs = realTimeDiffMs * 12; // Time is 12x faster
+
+    // Calculate Lapa date components
+    const lapaYearsPassed = Math.floor(lapaTimeDiffMs / LAPA_YEAR_IN_MS);
     const lapaCurrentYear = LAPA_BASE_YEAR + lapaYearsPassed;
     
-    const fractionOfMonthPassed = realMonthsPassed - lapaYearsPassed;
-    const lapaDaysIntoYear = fractionOfMonthPassed * LAPA_DAYS_IN_MONTH * LAPA_MONTHS_IN_YEAR;
-    
-    const lapaMonthIndex = Math.floor(lapaDaysIntoYear / LAPA_DAYS_IN_MONTH) % LAPA_MONTHS_IN_YEAR;
-    const lapaDay = Math.floor(lapaDaysIntoYear % LAPA_DAYS_IN_MONTH) + 1;
-
+    const remainderAfterYears = lapaTimeDiffMs % LAPA_YEAR_IN_MS;
+    const lapaMonthIndex = Math.floor(remainderAfterYears / LAPA_MONTH_IN_MS);
     const lapaMonth = LAPA_MONTHS[lapaMonthIndex];
 
-    const lapaHour = currentRealDate.getUTCHours();
-    const lapaMinute = currentRealDate.getUTCMinutes();
-    const lapaSecond = currentRealDate.getUTCSeconds();
-    
+    const remainderAfterMonths = remainderAfterYears % LAPA_MONTH_IN_MS;
+    const lapaDay = Math.floor(remainderAfterMonths / LAPA_DAY_IN_MS) + 1;
+
+    // Calculate Lapa time components
+    const remainderAfterDays = remainderAfterMonths % LAPA_DAY_IN_MS;
+    const lapaHour = Math.floor(remainderAfterDays / LAPA_HOUR_IN_MS);
+    const remainderAfterHours = remainderAfterDays % LAPA_HOUR_IN_MS;
+    const lapaMinute = Math.floor(remainderAfterHours / LAPA_MINUTE_IN_MS);
+    const remainderAfterMinutes = remainderAfterHours % LAPA_MINUTE_IN_MS;
+    const lapaSecond = Math.floor(remainderAfterMinutes / LAPA_SECOND_IN_MS);
+
     return {
         year: lapaCurrentYear,
         month: lapaMonth,
