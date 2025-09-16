@@ -14,23 +14,21 @@ import {
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { PlusCircle } from "lucide-react";
-import { getTranslations } from "@/lib/get-translations";
 import type { Country } from "@/lib/definitions";
 
 export default async function CountriesPage() {
-  const t = await getTranslations();
   const countries: Country[] = await getCountries();
 
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <h1 className="font-headline text-4xl font-bold text-primary md:text-5xl">
-          {t('countries.title')}
+          Registered Nations
         </h1>
         <Button asChild>
           <Link href="/register-country">
             <PlusCircle className="mr-2 h-4 w-4" />
-            {t('countries.registerNew')}
+            Register New
           </Link>
         </Button>
       </div>
@@ -39,8 +37,8 @@ export default async function CountriesPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[40%]">{t('countries.countryNameHeader')}</TableHead>
-              <TableHead>{t('countries.ownerHeader')}</TableHead>
+              <TableHead className="w-[40%]">Country Name</TableHead>
+              <TableHead>Owner</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -54,13 +52,13 @@ export default async function CountriesPage() {
             ) : (
               <TableRow>
                 <TableCell colSpan={2} className="text-center">
-                  {t('countries.noCountries')}
+                  No countries have been registered yet.
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
           {countries.length === 0 && (
-             <TableCaption>{t('countries.noCountries')}</TableCaption>
+             <TableCaption>No countries have been registered yet.</TableCaption>
           )}
         </Table>
       </div>

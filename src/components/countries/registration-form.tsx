@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useActionState, useEffect } from "react";
@@ -18,26 +19,22 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { useLocalization } from "@/hooks/use-localization";
 
 const CountrySchema = z.object({
-  name: z.string().min(3, 'validation.countryNameMin'),
-  owner: z.string().min(2, 'validation.ownerNameMin'),
+  name: z.string().min(3, 'Country name must be at least 3 characters.'),
+  owner: z.string().min(2, 'Owner name must be at least 2 characters.'),
 });
 
 function SubmitButton() {
   const { pending } = useFormStatus();
-  const { t } = useLocalization();
   return (
     <Button type="submit" disabled={pending} className="w-full">
-      {pending ? t('registerCountry.buttonPending') : t('registerCountry.button')}
+      {pending ? "Registering..." : "Register Country"}
     </Button>
   );
 }
 
 export default function CountryRegistrationForm() {
-  const { t } = useLocalization();
-
   const [state, formAction] = useActionState(registerCountryAction, {
     message: "",
     errors: undefined,
@@ -58,10 +55,10 @@ export default function CountryRegistrationForm() {
        toast({
         variant: "destructive",
         title: "Error",
-        description: t(state.message),
+        description: state.message,
       });
     }
-  }, [state, toast, t]);
+  }, [state, toast]);
 
   return (
     <Form {...form}>
@@ -71,9 +68,9 @@ export default function CountryRegistrationForm() {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t('registerCountry.countryNameLabel')}</FormLabel>
+              <FormLabel>Country Name</FormLabel>
               <FormControl>
-                <Input placeholder={t('registerCountry.countryNamePlaceholder')} {...field} />
+                <Input placeholder="e.g., Republic of Eldoria" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -84,9 +81,9 @@ export default function CountryRegistrationForm() {
           name="owner"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t('registerCountry.ownerNameLabel')}</FormLabel>
+              <FormLabel>Owner Name</FormLabel>
               <FormControl>
-                <Input placeholder={t('registerCountry.ownerNamePlaceholder')} {...field} />
+                <Input placeholder="e.g., Alice" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

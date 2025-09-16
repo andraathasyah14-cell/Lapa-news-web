@@ -29,29 +29,26 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useLocalization } from "@/hooks/use-localization";
 
 const UpdateSchema = z.object({
-  title: z.string().min(5, 'validation.titleMin'),
-  content: z.string().min(20, 'validation.contentMin'),
-  year: z.coerce.number().int().min(1, 'validation.yearMin'),
-  countryId: z.string().min(1, 'validation.countryRequired'),
+  title: z.string().min(5, "Title must be at least 5 characters."),
+  content: z.string().min(20, "Content must be at least 20 characters."),
+  year: z.coerce.number().int().min(1, "Year must be a positive number."),
+  countryId: z.string().min(1, "You must select a country."),
   needsMapUpdate: z.boolean().default(false).optional(),
 });
 
 
 function SubmitButton() {
   const { pending } = useFormStatus();
-  const { t } = useLocalization();
   return (
     <Button type="submit" disabled={pending} className="w-full">
-      {pending ? t('submitUpdate.buttonPending') : t('submitUpdate.button')}
+      {pending ? "Submitting..." : "Submit Update"}
     </Button>
   );
 }
 
 export default function UpdateSubmissionForm({ countries }: { countries: Country[] }) {
-  const { t } = useLocalization();
   
   const [state, formAction] = useActionState(submitUpdateAction, {
     message: "",
@@ -76,10 +73,10 @@ export default function UpdateSubmissionForm({ countries }: { countries: Country
        toast({
         variant: "destructive",
         title: "Error",
-        description: t(state.message),
+        description: state.message,
       });
     }
-  }, [state, toast, t]);
+  }, [state, toast]);
 
   return (
     <Form {...form}>
@@ -89,11 +86,11 @@ export default function UpdateSubmissionForm({ countries }: { countries: Country
           name="countryId"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t('submitUpdate.countryLabel')}</FormLabel>
+              <FormLabel>Country</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder={t('submitUpdate.countryPlaceholder')} />
+                    <SelectValue placeholder="Select a country to post from" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
@@ -113,9 +110,9 @@ export default function UpdateSubmissionForm({ countries }: { countries: Country
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t('submitUpdate.updateTitleLabel')}</FormLabel>
+              <FormLabel>Update Title</FormLabel>
               <FormControl>
-                <Input placeholder={t('submitUpdate.updateTitlePlaceholder')} {...field} />
+                <Input placeholder="e.g., Economic Boom in the Western Provinces" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -126,10 +123,10 @@ export default function UpdateSubmissionForm({ countries }: { countries: Country
           name="content"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t('submitUpdate.contentLabel')}</FormLabel>
+              <FormLabel>Content</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder={t('submitUpdate.contentPlaceholder')}
+                  placeholder="Share the details of your country's latest developments..."
                   className="min-h-[150px]"
                   {...field}
                 />
@@ -143,7 +140,7 @@ export default function UpdateSubmissionForm({ countries }: { countries: Country
           name="year"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t('submitUpdate.yearLabel')}</FormLabel>
+              <FormLabel>Year</FormLabel>
               <FormControl>
                 <Input type="number" {...field} />
               </FormControl>
@@ -164,7 +161,7 @@ export default function UpdateSubmissionForm({ countries }: { countries: Country
               </FormControl>
               <div className="space-y-1 leading-none">
                 <FormLabel>
-                  {t('submitUpdate.needsMapUpdateLabel')}
+                  Does this update change the world map?
                 </FormLabel>
               </div>
             </FormItem>

@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -14,7 +15,6 @@ import {
 
 import { cn } from "@/lib/utils"
 import { Label } from "@/components/ui/label"
-import { useLocalization } from "@/hooks/use-localization"
 
 const Form = FormProvider
 
@@ -147,15 +147,12 @@ const FormMessage = React.forwardRef<
   HTMLParagraphElement,
   React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, children, ...props }, ref) => {
-  const { error, formMessageId } = useFormField()
-  const { t } = useLocalization()
+  const { error } = useFormField()
   const body = error ? String(error?.message) : children
 
   if (!body) {
     return null
   }
-
-  const translatedBody = t(body);
 
   return (
     <p
@@ -164,7 +161,7 @@ const FormMessage = React.forwardRef<
       className={cn("text-sm font-medium text-destructive", className)}
       {...props}
     >
-      {translatedBody}
+      {body}
     </p>
   )
 })

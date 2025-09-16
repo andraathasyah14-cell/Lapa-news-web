@@ -2,20 +2,18 @@
 'use server';
 import CountryRegistrationForm from "@/components/countries/registration-form";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { getTranslations } from "@/lib/get-translations";
 
 export default async function RegisterCountryPage() {
-  const t = await getTranslations();
   return (
     <div className="max-w-2xl mx-auto">
         <h1 className="font-headline text-4xl font-bold text-primary md:text-5xl mb-8 text-center">
-          {t('registerCountry.title')}
+          Found a New Nation
         </h1>
         <Card>
             <CardHeader>
-                <CardTitle>{t('registerCountry.cardTitle')}</CardTitle>
+                <CardTitle>Country Details</CardTitle>
                 <CardDescription>
-                    {t('registerCountry.cardDescription')}
+                    Provide the name of your new nation and your designation as its owner.
                 </CardDescription>
             </CardHeader>
             <CardContent>

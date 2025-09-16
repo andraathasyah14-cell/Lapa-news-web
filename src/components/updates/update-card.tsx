@@ -19,7 +19,6 @@ import {
 import { CommentSection } from "@/components/updates/comment-section";
 import { Badge } from "@/components/ui/badge";
 import { MessageSquare, Map } from "lucide-react";
-import { useLocalization } from "@/hooks/use-localization";
 
 interface UpdateCardProps {
   update: Update;
@@ -27,7 +26,6 @@ interface UpdateCardProps {
 }
 
 export function UpdateCard({ update, country }: UpdateCardProps) {
-  const { t } = useLocalization();
   const formattedDate = new Date(update.createdAt).toLocaleDateString("en-US", {
     year: 'numeric',
     month: 'long',
@@ -39,12 +37,12 @@ export function UpdateCard({ update, country }: UpdateCardProps) {
       <CardHeader>
         <div className="flex justify-between items-start">
             <CardDescription className="text-card-foreground/80">
-                {t('updateCard.from')} <span className="font-semibold text-card-foreground">{country?.name || t('updateCard.unknownNation')}</span> &bull; {formattedDate} &bull; {t('updateCard.year')} {update.year}
+                From <span className="font-semibold text-card-foreground">{country?.name || "An unknown nation"}</span> &bull; {formattedDate} &bull; Year {update.year}
             </CardDescription>
             {update.needsMapUpdate && (
                 <Badge variant="destructive" className="flex items-center gap-1">
                     <Map className="h-3 w-3" />
-                    <span>{t('updateCard.mapUpdate')}</span>
+                    <span>Need Map Update</span>
                 </Badge>
             )}
         </div>
@@ -59,7 +57,7 @@ export function UpdateCard({ update, country }: UpdateCardProps) {
             <AccordionTrigger>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <MessageSquare className="h-4 w-4" />
-                <span>{t('updateCard.comments')} ({update.comments.length})</span>
+                <span>Comments ({update.comments.length})</span>
               </div>
             </AccordionTrigger>
             <AccordionContent>

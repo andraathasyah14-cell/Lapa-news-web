@@ -1,6 +1,6 @@
+
 import { Logo } from "@/components/layout/logo";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import LanguageSwitcher from "./language-switcher";
 
 export function Header() {
   return (
@@ -9,7 +9,6 @@ export function Header() {
         <Logo />
       </div>
       <div className="flex items-center gap-2">
-        <LanguageSwitcher />
         <SidebarTrigger />
       </div>
     </header>

@@ -1,3 +1,4 @@
+
 "use server";
 
 import { z } from "zod";
@@ -7,8 +8,8 @@ import { redirect } from "next/navigation";
 import { generateMagazineCover, type GenerateMagazineCoverInput } from "@/ai/flows/generate-magazine-cover";
 
 const CountrySchema = z.object({
-  name: z.string().min(3, "validation.countryNameMin"),
-  owner: z.string().min(2, "validation.ownerNameMin"),
+  name: z.string().min(3, "Country name must be at least 3 characters."),
+  owner: z.string().min(2, "Owner name must be at least 2 characters."),
 });
 
 export async function registerCountryAction(prevState: any, formData: FormData) {
@@ -20,14 +21,14 @@ export async function registerCountryAction(prevState: any, formData: FormData) 
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
-      message: "errors.validationFailed",
+      message: "Validation failed.",
     };
   }
 
   try {
     await addCountry(validatedFields.data);
   } catch (e) {
-    return { message: "errors.registerCountryFailed" };
+    return { message: "Failed to register country." };
   }
 
   revalidatePath("/countries");
@@ -37,10 +38,10 @@ export async function registerCountryAction(prevState: any, formData: FormData) 
 
 
 const UpdateSchema = z.object({
-  title: z.string().min(5, "validation.titleMin"),
-  content: z.string().min(20, "validation.contentMin"),
-  year: z.coerce.number().int().min(1, "validation.yearMin"),
-  countryId: z.string().min(1, "validation.countryRequired"),
+  title: z.string().min(5, "Title must be at least 5 characters."),
+  content: z.string().min(20, "Content must be at least 20 characters."),
+  year: z.coerce.number().int().min(1, "Year must be a positive number."),
+  countryId: z.string().min(1, "You must select a country."),
   needsMapUpdate: z.preprocess((val) => val === 'on', z.boolean()).optional(),
 });
 
@@ -56,7 +57,7 @@ export async function submitUpdateAction(prevState: any, formData: FormData) {
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
-      message: "errors.validationFailed",
+      message: "Validation failed.",
     };
   }
 
@@ -66,7 +67,7 @@ export async function submitUpdateAction(prevState: any, formData: FormData) {
       createdAt: new Date().toISOString(),
     });
   } catch (e) {
-    return { message: "errors.submitUpdateFailed" };
+    return { message: "Failed to submit update." };
   }
 
   revalidatePath("/");
@@ -75,8 +76,8 @@ export async function submitUpdateAction(prevState: any, formData: FormData) {
 
 
 const CommentSchema = z.object({
-  author: z.string().min(2, "validation.authorMin"),
-  content: z.string().min(1, "validation.commentMin"),
+  author: z.string().min(2, "Name must be at least 2 characters."),
+  content: z.string().min(1, "Comment cannot be empty."),
   updateId: z.string(),
 });
 
@@ -90,7 +91,7 @@ export async function addCommentAction(prevState: any, formData: FormData) {
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
-      message: "errors.validationFailed",
+      message: "Validation failed.",
     };
   }
   
@@ -99,14 +100,14 @@ export async function addCommentAction(prevState: any, formData: FormData) {
   try {
     await addCommentToUpdate(updateId, commentData);
   } catch (e) {
-    return { message: "errors.addCommentFailed" };
+    return { message: "Failed to add comment." };
   }
 
   revalidatePath("/");
 }
 
 const MagazineCoverSchema = z.object({
-  updateId: z.string().min(1, "validation.updateRequired"),
+  updateId: z.string().min(1, "Please select an update."),
 });
 
 export async function generateCoverAction(formData: FormData) {
@@ -116,7 +117,7 @@ export async function generateCoverAction(formData: FormData) {
 
   if (!validatedFields.success) {
     return {
-      error: "errors.validationFailed",
+      error: "Validation failed.",
       details: validatedFields.error.flatten().fieldErrors,
     };
   }
@@ -124,7 +125,7 @@ export async function generateCoverAction(formData: FormData) {
   const update = await getUpdateById(validatedFields.data.updateId);
 
   if (!update) {
-    return { error: "errors.updateNotFound" };
+    return { error: "Update not found." };
   }
 
   try {
@@ -137,6 +138,6 @@ export async function generateCoverAction(formData: FormData) {
     return { coverImage: result.coverImage };
   } catch (error) {
     console.error("AI cover generation failed:", error);
-    return { error: "errors.generateCoverFailed" };
+    return { error: "Failed to generate magazine cover. Please try again." };
   }
 }

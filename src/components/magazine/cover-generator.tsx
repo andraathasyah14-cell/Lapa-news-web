@@ -15,7 +15,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { BookImage, Loader2 } from "lucide-react";
-import { useLocalization } from "@/hooks/use-localization";
 import { useToast } from "@/hooks/use-toast";
 
 
@@ -23,7 +22,6 @@ export default function MagazineCoverGenerator({ updates }: { updates: Update[] 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [coverImage, setCoverImage] = useState<string | null>(null);
-  const { t } = useLocalization();
   const { toast } = useToast();
 
   const handleSubmit = async (formData: FormData) => {
@@ -34,12 +32,11 @@ export default function MagazineCoverGenerator({ updates }: { updates: Update[] 
     const result = await generateCoverAction(formData);
 
     if (result.error) {
-      const errorMessage = t(result.error);
-      setError(errorMessage);
+      setError(result.error);
       toast({
         variant: "destructive",
         title: "Error",
-        description: errorMessage,
+        description: result.error,
       });
     } else if (result.coverImage) {
       setCoverImage(result.coverImage);
@@ -55,11 +52,11 @@ export default function MagazineCoverGenerator({ updates }: { updates: Update[] 
           <form action={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="updateId" className="block text-sm font-medium mb-2">
-                {t('magazineCover.selectLabel')}
+                Select Update for Cover
               </label>
               <Select name="updateId" required>
                 <SelectTrigger id="updateId">
-                  <SelectValue placeholder={t('magazineCover.selectPlaceholder')} />
+                  <SelectValue placeholder="Choose a significant event..." />
                 </SelectTrigger>
                 <SelectContent>
                   {updates.map((update) => (
@@ -75,12 +72,12 @@ export default function MagazineCoverGenerator({ updates }: { updates: Update[] 
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {t('magazineCover.generateButtonPending')}
+                  Generating...
                 </>
               ) : (
                 <>
                   <BookImage className="mr-2 h-4 w-4" />
-                  {t('magazineCover.generateButton')}
+                  Generate Cover
                 </>
               )}
             </Button>
@@ -92,8 +89,8 @@ export default function MagazineCoverGenerator({ updates }: { updates: Update[] 
         {loading && (
             <div className="flex flex-col items-center gap-4 text-muted-foreground">
                 <Loader2 className="h-12 w-12 animate-spin text-primary" />
-                <p className="font-semibold">{t('magazineCover.generatingAlt')}</p>
-                <p className="text-sm">{t('magazineCover.generatingAltSub')}</p>
+                <p className="font-semibold">The AI is designing the cover...</p>
+                <p className="text-sm">This may take a moment.</p>
             </div>
         )}
         {coverImage && !loading && (
@@ -109,11 +106,10 @@ export default function MagazineCoverGenerator({ updates }: { updates: Update[] 
         {!loading && !coverImage && (
              <div className="flex flex-col items-center gap-2 text-muted-foreground text-center p-4">
                 <BookImage className="h-12 w-12" />
-                <p className="font-semibold">{t('magazineCover.placeholder')}</p>
+                <p className="font-semibold">Your generated cover will appear here</p>
             </div>
         )}
       </div>
     </div>
   );
 }
-

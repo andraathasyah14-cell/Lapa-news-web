@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useLocalization } from "@/hooks/use-localization";
 import { Avatar } from "../ui/avatar";
 import { UserIcon } from "../icons/user-icon";
 
@@ -13,7 +12,6 @@ const STORAGE_KEY = "geopolitika_fantastica_dev_credit_dismissed";
 
 export default function DeveloperCreditAlert() {
   const [isVisible, setIsVisible] = useState(false);
-  const { t } = useLocalization();
 
   useEffect(() => {
     // This code runs only on the client
