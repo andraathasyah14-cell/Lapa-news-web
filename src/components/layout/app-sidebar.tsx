@@ -14,6 +14,7 @@ import {
   PlusSquare,
   Library,
   BookImage,
+  Info,
 } from "lucide-react";
 import { Logo } from "@/components/layout/logo";
 import { useLocalization } from "@/hooks/use-localization";
@@ -28,6 +29,7 @@ export function AppSidebar() {
     { href: "/submit-update", label: t('sidebar.submitUpdate'), icon: PlusSquare },
     { href: "/register-country", label: t('sidebar.registerCountry'), icon: Library },
     { href: "/magazine-cover", label: t('sidebar.magazineCover'), icon: BookImage },
+    { href: "/info", label: t('sidebar.info'), icon: Info },
   ];
 
   return (

@@ -5,7 +5,8 @@
     "countries": "Countries",
     "submitUpdate": "Submit Update",
     "registerCountry": "Register Country",
-    "magazineCover": "Magazine Cover"
+    "magazineCover": "Magazine Cover",
+    "info": "Important Info"
   },
   "header": {
     "language": "Language",
@@ -77,6 +78,22 @@
     "commentPlaceholder": "Share your thoughts...",
     "postButton": "Post Comment",
     "postButtonPending": "Posting..."
+  },
+  "info": {
+    "title": "Important Info",
+    "subtitle": "Welcome to UNITED LAPA NATIONS (ULN)",
+    "welcomeTitle": "Welcome to ULN!",
+    "welcomeDescription": "Welcome to ULN, a mapgame organization set on the planet Lapa. Our mapgame combines interactive simulation games with in-depth worldbuilding.",
+    "rulesTitle": "Rules",
+    "rule1": "No 18+, spam, etc.",
+    "rule2": "References to real countries are suggested, but do not plagiarize completely.",
+    "rule3": "Military equipment can be taken from Google but must be realistic.",
+    "rule4": "Real religions should have their names changed, e.g., Islam = 'Dinhaq', Catholic = 'Romansky'.",
+    "rule5": "No 'bid'ah' clubs (too futuristic, nonsensical, etc.).",
+    "otherInfoTitle": "Other Important Info",
+    "info1": "1 Lapa year = 1 Earth month (September 2025 = 2080).",
+    "info2": "$= 1 ULD = 1 USD.",
+    "info3": "IG: @unitedlapanations (account is defunct)."
   },
   "validation": {
     "countryNameMin": "Country name must be at least 3 characters.",

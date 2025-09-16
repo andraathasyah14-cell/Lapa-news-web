@@ -5,7 +5,8 @@
     "countries": "Negara",
     "submitUpdate": "Kirim Pembaruan",
     "registerCountry": "Daftarkan Negara",
-    "magazineCover": "Sampul Majalah"
+    "magazineCover": "Sampul Majalah",
+    "info": "Info Penting"
   },
   "header": {
     "language": "Bahasa",
@@ -77,6 +78,22 @@
     "commentPlaceholder": "Bagikan pemikiran Anda...",
     "postButton": "Kirim Komentar",
     "postButtonPending": "Memposting..."
+  },
+  "info": {
+    "title": "Info Penting",
+    "subtitle": "Selamat datang di UNITED LAPA NATIONS (ULN)",
+    "welcomeTitle": "Selamat datang di ULN!",
+    "welcomeDescription": "Selamat datang di ULN, organisasi mapgame yang menggunakan latar planet Lapa. Mapgame kami memadukan permainan simulasi interaktif dengan worldbuilding yang dalam.",
+    "rulesTitle": "Aturan",
+    "rule1": "Dilarang 18+, spam, dll.",
+    "rule2": "Referensi negara asli disarankan, tapi jangan sepenuhnya menjiplak.",
+    "rule3": "Alutsista boleh ambil dari Google tapi harus realistis.",
+    "rule4": "Agama asli diganti sebutannya, misalnya Islam= 'Dinhaq' Katolik= 'Romansky'.",
+    "rule5": "Dilarang membuat yang aneh-aneh (terlalu futuristik, tidak masuk akal, dsb).",
+    "otherInfoTitle": "Info Penting Lainnya",
+    "info1": "1 tahun Lapa = 1 Bulan Bumi (September 2025 = 2080).",
+    "info2": "$= 1 ULD = 1 USD.",
+    "info3": "IG: @unitedlapanations (akun sudah tidak aktif)."
   },
   "validation": {
     "countryNameMin": "Nama negara harus minimal 3 karakter.",
