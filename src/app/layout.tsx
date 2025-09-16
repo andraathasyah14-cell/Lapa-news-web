@@ -39,7 +39,7 @@ export default async function RootLayout({
             <div
               className="absolute inset-0 bg-cover bg-center"
               style={{
-                backgroundImage: `url("https://media-cgk2-2.cdn.whatsapp.net/v/t61.24694-24/510376232_1160472446130816_4641922013729007901_n.jpg?ccb=11-4&oh=01_Q5Aa2gE1QXkvwY-ToGr0ldgryRKK7yq2AjLdaGiy4nr3KUClgQ&oe=68D615BE&_nc_sid=5e03e0&_nc_cat=102")`,
+                backgroundImage: `url("https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Flag_of_the_United_Nations.svg/1200px-Flag_of_the_United_Nations.svg.png")`,
                 opacity: 0.1,
                 filter: 'blur(3px)',
               }}
