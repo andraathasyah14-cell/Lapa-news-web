@@ -17,6 +17,11 @@ interface CommentSectionProps {
   comments: Comment[];
 }
 
+const CommentSchema = (t: (key: string) => string) => z.object({
+  author: z.string().min(2, t('validation.authorMin')),
+  content: z.string().min(1, t('validation.commentMin')),
+});
+
 function SubmitButton() {
   const { pending } = useFormStatus();
   const { t } = useLocalization();
@@ -30,11 +35,6 @@ function SubmitButton() {
 export function CommentSection({ updateId, comments }: CommentSectionProps) {
   const { t } = useLocalization();
 
-  const CommentSchema = z.object({
-    author: z.string().min(2, t('validation.authorMin')),
-    content: z.string().min(1, t('validation.commentMin')),
-  });
-
   const [state, formAction] = useActionState(addCommentAction, {
     message: "",
     errors: undefined,
@@ -42,8 +42,8 @@ export function CommentSection({ updateId, comments }: CommentSectionProps) {
   
   const formRef = useRef<HTMLFormElement>(null);
 
-  const form = useForm<z.infer<typeof CommentSchema>>({
-    resolver: zodResolver(CommentSchema),
+  const form = useForm<z.infer<ReturnType<typeof CommentSchema>>>({
+    resolver: zodResolver(CommentSchema(t)),
     defaultValues: { author: "", content: "" },
   });
 

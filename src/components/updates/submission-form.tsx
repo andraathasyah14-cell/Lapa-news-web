@@ -31,6 +31,14 @@ import { useToast } from "@/hooks/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useLocalization } from "@/hooks/use-localization";
 
+const UpdateSchema = (t: (key: string) => string) => z.object({
+  title: z.string().min(5, t('validation.titleMin')),
+  content: z.string().min(20, t('validation.contentMin')),
+  year: z.coerce.number().int().min(1, t('validation.yearMin')),
+  countryId: z.string().min(1, t('validation.countryRequired')),
+  needsMapUpdate: z.boolean().default(false).optional(),
+});
+
 function SubmitButton() {
   const { pending } = useFormStatus();
   const { t } = useLocalization();
@@ -44,22 +52,14 @@ function SubmitButton() {
 export default function UpdateSubmissionForm({ countries }: { countries: Country[] }) {
   const { t } = useLocalization();
   
-  const UpdateSchema = z.object({
-    title: z.string().min(5, t('validation.titleMin')),
-    content: z.string().min(20, t('validation.contentMin')),
-    year: z.coerce.number().int().min(1, t('validation.yearMin')),
-    countryId: z.string().min(1, t('validation.countryRequired')),
-    needsMapUpdate: z.boolean().default(false).optional(),
-  });
-
   const [state, formAction] = useActionState(submitUpdateAction, {
     message: "",
     errors: undefined,
   });
   const { toast } = useToast();
 
-  const form = useForm<z.infer<typeof UpdateSchema>>({
-    resolver: zodResolver(UpdateSchema),
+  const form = useForm<z.infer<ReturnType<typeof UpdateSchema>>>({
+    resolver: zodResolver(UpdateSchema(t)),
     defaultValues: {
       title: "",
       content: "",
