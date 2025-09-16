@@ -10,7 +10,7 @@ import { AppSidebar } from '@/components/layout/app-sidebar';
 import { Header } from '@/components/layout/header';
 import { Toaster } from "@/components/ui/toaster"
 import './globals.css';
-import WhatsAppWarning from '@/components/layout/whatsapp-warning';
+import { WhatsAppWarning } from '@/components/layout/whatsapp-warning';
 
 export const metadata: Metadata = {
   title: 'UNITED LAPA NATIONS',
