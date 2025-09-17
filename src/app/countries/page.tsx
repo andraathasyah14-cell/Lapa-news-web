@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { getCountriesAction } from "@/lib/actions";
 import {
   Table,
@@ -44,8 +44,12 @@ function CountriesTableSkeleton() {
 export default function CountriesPage() {
   const [countries, setCountries] = useState<Country[]>([]);
   const [loading, setLoading] = useState(true);
+  const fetching = useRef(false);
 
   useEffect(() => {
+    if (fetching.current) return;
+    fetching.current = true;
+
     async function fetchData() {
       try {
         const countriesData = await getCountriesAction();

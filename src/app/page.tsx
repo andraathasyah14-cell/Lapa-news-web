@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { getUpdatesAction, getCountriesAction } from '@/lib/actions';
 import { UpdateCard } from '@/components/updates/update-card';
 import type { Update, Country } from '@/lib/definitions';
@@ -24,8 +24,12 @@ export default function Home() {
   const [updates, setUpdates] = useState<Update[]>([]);
   const [countries, setCountries] = useState<Country[]>([]);
   const [loading, setLoading] = useState(true);
+  const fetching = useRef(false);
 
   useEffect(() => {
+    if (fetching.current) return;
+    fetching.current = true;
+    
     async function fetchData() {
       try {
         const [updatesData, countriesData] = await Promise.all([

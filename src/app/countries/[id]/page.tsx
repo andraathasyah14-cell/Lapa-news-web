@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { getCountryByIdAction, getUpdatesByCountryIdAction } from '@/lib/actions';
 import type { Country, Update } from '@/lib/definitions';
 import { notFound } from 'next/navigation';
@@ -32,8 +32,12 @@ export default function CountryProfilePage({ params }: { params: { id: string } 
   const [country, setCountry] = useState<Country | null>(null);
   const [updates, setUpdates] = useState<Update[]>([]);
   const [loading, setLoading] = useState(true);
+  const fetching = useRef(false);
 
   useEffect(() => {
+    if (fetching.current) return;
+    fetching.current = true;
+
     async function fetchData() {
       try {
         const countryData = await getCountryByIdAction(params.id);
