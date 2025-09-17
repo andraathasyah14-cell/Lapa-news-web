@@ -105,6 +105,8 @@ async function main() {
     await importUpdates();
 }
 
-main().catch(console.error).then(() => {
-    console.log('\nData import complete. Press Ctrl+C to exit.');
-});
+if (require.main === module) {
+  main().catch(console.error).then(() => {
+      console.log('\nData import complete. Press Ctrl+C to exit.');
+  });
+}
