@@ -1,23 +1,12 @@
 
 "use client";
 
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useRef } from "react";
 import { useFormStatus } from "react-dom";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { submitUpdateAction } from "@/lib/actions";
 import type { Country } from "@/lib/definitions";
 
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -29,25 +18,7 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
-
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
-
-const UpdateSchema = z.object({
-  title: z.string().min(5, "Title must be at least 5 characters."),
-  content: z.string().min(20, "Content must be at least 20 characters."),
-  year: z.coerce.number().int().min(1, "Year must be a positive number."),
-  countryId: z.string().min(1, "You must select a country."),
-  needsMapUpdate: z.boolean().default(false).optional(),
-  coverImage: z
-    .any()
-    .refine((file) => !file || file.size <= MAX_FILE_SIZE, `Max image size is 5MB.`)
-    .refine(
-      (file) => !file || ACCEPTED_IMAGE_TYPES.includes(file.type),
-      "Only .jpg, .jpeg, .png and .webp formats are supported."
-    ).optional(),
-});
-
+import { Label } from "../ui/label";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -59,139 +30,108 @@ function SubmitButton() {
 }
 
 export default function UpdateSubmissionForm({ countries }: { countries: Country[] }) {
-  
   const [state, formAction] = useActionState(submitUpdateAction, {
     message: "",
     errors: undefined,
+    success: false,
   });
+  
   const { toast } = useToast();
-
-  const form = useForm<z.infer<typeof UpdateSchema>>({
-    resolver: zodResolver(UpdateSchema),
-    defaultValues: {
-      title: "",
-      content: "",
-      year: new Date().getFullYear(),
-      countryId: "",
-      needsMapUpdate: false,
-    },
-    mode: 'onChange'
-  });
+  const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
-    if (state?.message && state.errors) {
+    if (state.success) {
+      toast({
+        title: "Success!",
+        description: "Your update has been submitted.",
+      });
+      formRef.current?.reset();
+      // Redirect is handled by the server action
+    } else if (state.message && state.errors) {
        toast({
         variant: "destructive",
-        title: "Error",
+        title: "Submission Failed",
         description: state.message,
       });
     }
   }, [state, toast]);
 
   return (
-    <Form {...form}>
-      <form action={formAction} className="space-y-6">
-        <FormField
-          control={form.control}
-          name="countryId"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Country</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a country for this update" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {countries.map((country) => (
-                    <SelectItem key={country.id} value={country.id}>
-                      {country.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="title"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Update Title</FormLabel>
-              <FormControl>
-                <Input placeholder="e.g., Economic Boom in the Western Provinces" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="coverImage"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Cover Image (Optional)</FormLabel>
-              <FormControl>
-                <Input type="file" accept="image/*" onChange={(e) => field.onChange(e.target.files?.[0])} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
+    <form ref={formRef} action={formAction} className="space-y-6">
+      <div className="space-y-2">
+        <Label htmlFor="countryId">Country</Label>
+        <Select name="countryId">
+          <SelectTrigger id="countryId">
+            <SelectValue placeholder="Select a country for this update" />
+          </SelectTrigger>
+          <SelectContent>
+            {countries.map((country) => (
+              <SelectItem key={country.id} value={country.id}>
+                {country.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        {state?.errors?.countryId && (
+            <p className="text-sm font-medium text-destructive">
+                {state.errors.countryId[0]}
+            </p>
+        )}
+      </div>
+      
+      <div className="space-y-2">
+        <Label htmlFor="title">Update Title</Label>
+        <Input id="title" name="title" placeholder="e.g., Economic Boom in the Western Provinces" />
+        {state?.errors?.title && (
+            <p className="text-sm font-medium text-destructive">
+                {state.errors.title[0]}
+            </p>
+        )}
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="coverImage">Cover Image (Optional)</Label>
+        <Input id="coverImage" name="coverImage" type="file" accept="image/*" />
+        {state?.errors?.coverImage && (
+            <p className="text-sm font-medium text-destructive">
+                {state.errors.coverImage[0]}
+            </p>
+        )}
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="content">Content</Label>
+        <Textarea
+          id="content"
           name="content"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Content</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Share the details of your country's latest developments..."
-                  className="min-h-[150px]"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          placeholder="Share the details of your country's latest developments..."
+          className="min-h-[150px]"
         />
-        <FormField
-          control={form.control}
-          name="year"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Year</FormLabel>
-              <FormControl>
-                <Input type="number" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-         <FormField
-          control={form.control}
-          name="needsMapUpdate"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-4">
-               <FormControl>
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </FormControl>
-              <div className="space-y-1 leading-none">
-                <FormLabel>
-                  Does this update change the world map?
-                </FormLabel>
-              </div>
-            </FormItem>
-          )}
-        />
-        <SubmitButton />
-      </form>
-    </Form>
+        {state?.errors?.content && (
+            <p className="text-sm font-medium text-destructive">
+                {state.errors.content[0]}
+            </p>
+        )}
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="year">Year</Label>
+        <Input id="year" name="year" type="number" defaultValue={new Date().getFullYear()} />
+        {state?.errors?.year && (
+            <p className="text-sm font-medium text-destructive">
+                {state.errors.year[0]}
+            </p>
+        )}
+      </div>
+
+      <div className="flex items-center space-x-2 rounded-md border p-4">
+        <Checkbox id="needsMapUpdate" name="needsMapUpdate" />
+        <Label htmlFor="needsMapUpdate" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+            Does this update change the world map?
+        </Label>
+      </div>
+      
+      <SubmitButton />
+    </form>
   );
 }

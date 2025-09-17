@@ -57,7 +57,7 @@ export async function registerCountryAction(prevState: any, formData: FormData) 
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
-      message: "Validation failed.",
+      message: "Validation failed. Please check the fields.",
       success: false,
     };
   }
@@ -115,7 +115,8 @@ export async function submitUpdateAction(prevState: any, formData: FormData) {
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
-      message: "Validation failed.",
+      message: "Validation failed. Please check your input.",
+      success: false,
     };
   }
 
@@ -126,10 +127,9 @@ export async function submitUpdateAction(prevState: any, formData: FormData) {
       try {
         coverImageUrl = await fileToDataUrl(imageFile);
       } catch (e) {
-          return { message: "Failed to process image."}
+          return { message: "Failed to process image.", success: false, errors: {}}
       }
   }
-
 
   try {
     await addUpdate({
@@ -139,11 +139,12 @@ export async function submitUpdateAction(prevState: any, formData: FormData) {
     });
   } catch (e: any) {
     console.error("Firebase Error:", e);
-    return { message: `Failed to submit update. Error: ${e.message}` };
+    return { message: `Failed to submit update. Error: ${e.message}`, success: false, errors: {} };
   }
 
   revalidatePath("/");
-  redirect("/");
+  revalidatePath("/updates/submit");
+  return { message: "Update submitted successfully!", success: true, errors: {} };
 }
 
 
