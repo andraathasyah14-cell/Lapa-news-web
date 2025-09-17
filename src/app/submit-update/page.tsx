@@ -1,83 +1,61 @@
 
-'use client';
+'use server';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import UpdateSubmissionForm from "@/components/updates/submission-form";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getCountries } from "@/lib/data";
 import type { Country } from "@/lib/definitions";
-import { useAuth } from '@/hooks/use-auth';
-import { Skeleton } from '@/components/ui/skeleton';
-import { useActionState } from 'react';
+import ProtectedPage from "@/components/auth/protected-page";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
-// Since we cannot use hooks directly in Server Components, 
-// we create a client component that fetches the data.
-function SubmitUpdatePageContent({ countries }: { countries: Country[] }) {
-    const { user, loading } = useAuth();
-    const router = useRouter();
-
-    useEffect(() => {
-        if (!loading && !user) {
-            router.push('/login?redirect=/submit-update');
-        }
-    }, [user, loading, router]);
-
-    if (loading || !user) {
-        return (
-            <div className="max-w-2xl mx-auto space-y-8">
-                <Skeleton className="h-12 w-3/4 mx-auto" />
-                <Card>
-                    <CardHeader>
-                        <Skeleton className="h-8 w-1/2" />
-                        <Skeleton className="h-4 w-3/4" />
-                    </CardHeader>
-                    <CardContent className="space-y-6">
-                        <Skeleton className="h-10 w-full" />
-                        <Skeleton className="h-10 w-full" />
-                        <Skeleton className="h-24 w-full" />
-                        <Skeleton className="h-10 w-full" />
-                    </CardContent>
-                </Card>
-            </div>
-        );
-    }
-
-    // Filter countries to only show the ones owned by the current user
-    const userCountries = countries.filter(c => c.owner === user.displayName);
+// This is now a Server Component that fetches its own data
+export default async function SubmitUpdatePage() {
+    const allCountries: Country[] = await getCountries();
 
     return (
-        <div className="max-w-2xl mx-auto">
-            <h1 className="font-headline text-4xl font-bold text-primary md:text-5xl mb-8 text-center">
-                Broadcast a Global Update
-            </h1>
-            <Card>
-                <CardHeader>
-                    <CardTitle>Update Details</CardTitle>
-                    <CardDescription>
-                        Share the latest news from your nation. You can only post updates for countries you own.
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    {userCountries.length > 0 ? (
-                        <UpdateSubmissionForm countries={userCountries} />
-                    ) : (
-                        <div className="text-center text-muted-foreground py-8">
-                            <h2 className="text-xl font-semibold">No Countries Found</h2>
-                            <p className="mt-2">You do not own any countries yet. Please register a country before submitting an update.</p>
-                        </div>
-                    )}
-                </CardContent>
-            </Card>
-        </div>
+        <ProtectedPage
+            userFilter={(user) => {
+                // The page is accessible if the user owns at least one country.
+                return allCountries.some(c => c.owner === user.displayName);
+            }}
+            rejectionContent={
+                <div className="max-w-2xl mx-auto text-center">
+                    <h1 className="font-headline text-4xl font-bold text-primary md:text-5xl mb-4">
+                        No Countries Found
+                    </h1>
+                     <p className="text-lg text-muted-foreground mb-8">
+                        You need to own a country before you can submit an update.
+                    </p>
+                    <Button asChild>
+                        <Link href="/register-country">Register a Country</Link>
+                    </Button>
+                </div>
+            }
+        >
+            {({ user }) => {
+                // This content is rendered only for authenticated users who own a country.
+                const userCountries = allCountries.filter(c => c.owner === user.displayName);
+                
+                return (
+                    <div className="max-w-2xl mx-auto">
+                        <h1 className="font-headline text-4xl font-bold text-primary md:text-5xl mb-8 text-center">
+                            Broadcast a Global Update
+                        </h1>
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Update Details</CardTitle>
+                                <CardDescription>
+                                    Share the latest news from your nation. You can only post updates for countries you own.
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <UpdateSubmissionForm countries={userCountries} />
+                            </CardContent>
+                        </Card>
+                    </div>
+                );
+            }}
+        </ProtectedPage>
     );
-}
-
-
-// This remains a server component to fetch initial data
-export default function SubmitUpdatePage() {
-    // We fetch all countries here on the server
-    const [countries, setCountries] = useActionState(async () => await getCountries(), []);
-    
-    return <SubmitUpdatePageContent countries={countries as Country[]} />;
 }

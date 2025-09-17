@@ -2,9 +2,9 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { onAuthStateChanged, GoogleAuthProvider, signInWithRedirect, signOut, User } from 'firebase/auth';
+import { onAuthStateChanged, GoogleAuthProvider, signInWithPopup, getRedirectResult, signOut, User } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 interface AuthContextType {
   user: User | null;
@@ -21,42 +21,52 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const router = useRouter();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
       setLoading(false);
     });
+
+    // Also handle redirect result on initial load
+    getRedirectResult(auth)
+      .then((result) => {
+        if (result?.user) {
+          setUser(result.user);
+        }
+      })
+      .catch((error) => {
+        console.error("Error getting redirect result:", error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
 
     return () => unsubscribe();
   }, []);
 
   const loginWithGoogle = async (redirectUrl: string = '/') => {
     const provider = new GoogleAuthProvider();
+    setLoading(true);
     try {
-      // Store the redirect URL in session storage to retrieve it after login
-      sessionStorage.setItem('login_redirect', redirectUrl);
-      await signInWithRedirect(auth, provider);
+      const result = await signInWithPopup(auth, provider);
+      setUser(result.user);
+      router.push(redirectUrl);
     } catch (error) {
       console.error("Error during Google sign-in:", error);
+      // Handle specific errors if needed, e.g., popup closed by user
+    } finally {
+      setLoading(false);
     }
   };
 
   const logout = async () => {
     try {
       await signOut(auth);
+      // setUser(null) is handled by onAuthStateChanged
       router.push('/');
     } catch (error) {
       console.error("Error during sign-out:", error);
     }
   };
-  
-  // Handle redirect after login
-  useEffect(() => {
-      const redirectUrl = sessionStorage.getItem('login_redirect');
-      if (user && redirectUrl) {
-          sessionStorage.removeItem('login_redirect');
-          router.push(redirectUrl);
-      }
-  }, [user, router]);
 
   return (
     <AuthContext.Provider value={{ user, loading, loginWithGoogle, logout }}>
