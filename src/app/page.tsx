@@ -1,6 +1,4 @@
 
-'use server';
-
 import { getCountries, getUpdates } from '@/lib/data';
 import { UpdateCard } from '@/components/updates/update-card';
 import type { Update, Country } from '@/lib/definitions';

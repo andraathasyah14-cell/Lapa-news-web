@@ -1,6 +1,3 @@
-
-'use server';
-
 import CountryRegistrationForm from "@/components/countries/registration-form";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import ProtectedPage from "@/components/auth/protected-page";

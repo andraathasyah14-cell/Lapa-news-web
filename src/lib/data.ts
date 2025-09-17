@@ -124,7 +124,7 @@ export async function getUpdateById(id: string): Promise<Update | undefined> {
 export async function addUpdate(update: Omit<Update, 'id' | 'comments'>) {
     const newUpdateData = {
         ...update,
-        createdAt: Timestamp.fromDate(new Date(update.createdAt)),
+        createdAt: new Date(update.createdAt),
         comments: [],
     };
     const docRef = await addDoc(collection(db, 'updates'), newUpdateData);
