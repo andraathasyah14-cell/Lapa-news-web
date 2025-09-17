@@ -211,23 +211,22 @@ export async function submitUpdateAction(prevState: any, formData: FormData) {
     };
   }
 
-  const { coverImage: imageFile, ...updateData } = validatedFields.data;
-  let coverImageUrl: string | undefined = undefined;
+  const { coverImage, ...updateData } = validatedFields.data;
+  const newUpdate: Omit<Update, 'id' | 'comments'> = {
+    ...updateData,
+    createdAt: new Date().toISOString(),
+  };
 
-  if (imageFile && imageFile.size > 0) {
+  if (coverImage && coverImage.size > 0) {
       try {
-        coverImageUrl = await fileToDataUrl(imageFile);
+        newUpdate.coverImage = await fileToDataUrl(coverImage);
       } catch (e) {
           return { message: "Failed to process image.", success: false, errors: {}}
       }
   }
 
   try {
-    await addUpdate({
-      ...updateData,
-      coverImage: coverImageUrl,
-      createdAt: new Date().toISOString(),
-    });
+    await addUpdate(newUpdate);
   } catch (e: any) {
     console.error("Firebase Error:", e);
     return { message: `Failed to submit update. Error: ${e.message}`, success: false, errors: {} };
@@ -310,5 +309,3 @@ export async function generateCoverAction(formData: FormData) {
     return { error: "Failed to generate magazine cover. Please try again." };
   }
 }
-
-    
