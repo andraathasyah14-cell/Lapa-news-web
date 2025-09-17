@@ -18,20 +18,6 @@ export default async function Home() {
 
   return (
     <div className="space-y-8">
-       <Alert variant="destructive" className="bg-blue-100 border-blue-200 text-blue-800 dark:bg-blue-900/30 dark:border-blue-800/50 dark:text-blue-200">
-        <div className="flex items-center gap-4">
-            <HelpCircle className="h-6 w-6 text-blue-600 dark:text-blue-300" />
-            <div>
-                <AlertTitle className="font-headline text-lg text-blue-900 dark:text-blue-100">Registrasi Gagal? Klik di Sini!</AlertTitle>
-                <AlertDescription className="text-blue-800/90 dark:text-blue-200/90">
-                    Jika Anda tidak bisa registrasi atau input data, ada satu pengaturan penting yang harus diubah di website Firebase. 
-                    <Link href="/help-firebase" className="font-bold underline hover:text-blue-700 dark:hover:text-blue-100">
-                        Klik di sini untuk melihat panduan visual langkah-demi-langkah.
-                    </Link>
-                </AlertDescription>
-            </div>
-        </div>
-    </Alert>
       <DeveloperCreditAlert />
       <LapaClock />
       <h1 className="font-headline text-4xl font-bold text-primary md:text-5xl">
