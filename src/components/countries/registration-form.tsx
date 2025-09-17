@@ -1,10 +1,9 @@
 
 "use client";
 
-import { useActionState, useEffect, useRef } from "react";
+import { useActionState, useEffect } from "react";
 import { useFormStatus } from "react-dom";
 import { registerCountryAction } from "@/lib/actions";
-import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,33 +27,28 @@ export default function CountryRegistrationForm() {
   });
   
   const { toast } = useToast();
-  const router = useRouter();
-  const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
     if (state.success) {
-      toast({
-        title: "Success",
-        description: "Country registered successfully!",
-      });
-      router.push('/countries');
-      router.refresh(); 
-      formRef.current?.reset();
+      // The redirect is now handled by the server action.
+      // We can still show a toast if we want, but it might not be visible before the redirect happens.
+      // For a better UX, we could pass a query param and show the toast on the destination page,
+      // but for now, we'll keep it simple and let the redirect be the main feedback.
     } else if (state.message && state.errors) {
        toast({
         variant: "destructive",
-        title: "Error",
+        title: "Registration Failed",
         description: state.message,
       });
     }
-  }, [state, toast, router]);
+  }, [state, toast]);
 
   return (
-    <form ref={formRef} action={formAction} className="space-y-6">
+    <form action={formAction} className="space-y-6">
         <div className="space-y-2">
             <Label htmlFor="name">Country Name</Label>
             <Input id="name" name="name" placeholder="e.g., Republic of Eldoria" />
-            {state.errors?.name && (
+            {state?.errors?.name && (
                 <p className="text-sm font-medium text-destructive">
                     {state.errors.name[0]}
                 </p>
@@ -63,7 +57,7 @@ export default function CountryRegistrationForm() {
         <div className="space-y-2">
             <Label htmlFor="owner">Owner Name</Label>
             <Input id="owner" name="owner" placeholder="e.g., Alice" />
-             {state.errors?.owner && (
+             {state?.errors?.owner && (
                 <p className="text-sm font-medium text-destructive">
                     {state.errors.owner[0]}
                 </p>

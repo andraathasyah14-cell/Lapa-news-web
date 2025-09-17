@@ -68,18 +68,14 @@ export async function registerCountryAction(prevState: any, formData: FormData) 
     console.error("Firebase Error:", e);
     // More specific error message
     if (e.code === 'permission-denied') {
-        return { message: "Failed to register country. Permission denied. Please check Firestore rules.", success: false };
+        return { message: "Failed to register country. Permission denied. Please check Firestore rules.", success: false, errors: {} };
     }
-    return { message: `Failed to register country. Error: ${e.message}`, success: false };
+    return { message: `Failed to register country. Error: ${e.message}`, success: false, errors: {} };
   }
 
   revalidatePath("/countries");
   revalidatePath("/");
-  // Redirecting will be handled by the client-side form upon success
-  return {
-      message: "Country registered successfully.",
-      success: true,
-  }
+  redirect("/countries");
 }
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
