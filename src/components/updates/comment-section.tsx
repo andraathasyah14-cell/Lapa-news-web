@@ -2,7 +2,7 @@
 "use client";
 
 import type { Comment } from "@/lib/definitions";
-import { useActionState, useEffect, useRef } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,8 +13,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "../ui/card";
 import { UserIcon } from "../icons";
 import { Avatar, AvatarFallback } from "../ui/avatar";
-import { useAuth } from "@/hooks/use-auth";
-import Link from "next/link";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+
 
 interface CommentSectionProps {
   updateId: string;
@@ -22,7 +23,8 @@ interface CommentSectionProps {
 }
 
 const CommentSchema = z.object({
-  content: z.string().min(1, "Comment cannot be empty."),
+    author: z.string().min(2, "Name must be at least 2 characters."),
+    content: z.string().min(1, "Comment cannot be empty."),
 });
 
 function SubmitButton() {
@@ -35,7 +37,6 @@ function SubmitButton() {
 }
 
 export function CommentSection({ updateId, comments }: CommentSectionProps) {
-  const { user } = useAuth();
   const [state, formAction] = useActionState(addCommentAction, {
     message: "",
     errors: undefined,
@@ -44,7 +45,7 @@ export function CommentSection({ updateId, comments }: CommentSectionProps) {
   const formRef = useRef<HTMLFormElement>(null);
   const { register, formState: { errors }, reset } = useForm<z.infer<typeof CommentSchema>>({
     resolver: zodResolver(CommentSchema),
-    defaultValues: { content: "" },
+    defaultValues: { author: "", content: "" },
   });
 
   useEffect(() => {
@@ -53,12 +54,6 @@ export function CommentSection({ updateId, comments }: CommentSectionProps) {
       formRef.current?.reset();
     }
   }, [state, reset]);
-
-  const actionWithAuthor = (payload: FormData) => {
-      if (!user) return;
-      payload.append('author', user.displayName ?? 'Anonymous');
-      formAction(payload);
-  }
 
   return (
     <div className="space-y-6 pt-4">
@@ -90,12 +85,18 @@ export function CommentSection({ updateId, comments }: CommentSectionProps) {
 
       <Card className="bg-card/50 border-border/50">
         <CardContent className="pt-6">
-          {user ? (
-            <form ref={formRef} action={actionWithAuthor} className="space-y-4">
-              <h4 className="text-md font-semibold text-card-foreground">Add a comment as {user.displayName}</h4>
+            <form ref={formRef} action={formAction} className="space-y-4">
+              <h4 className="text-md font-semibold text-card-foreground">Add a comment</h4>
               <input type="hidden" name="updateId" value={updateId} />
-              <div>
-                <Textarea {...register("content")} placeholder="Share your thoughts..." rows={2} aria-invalid={!!errors.content}/>
+              <div className="space-y-2">
+                 <Label htmlFor="author">Your Name</Label>
+                 <Input id="author" {...register("author")} placeholder="John Doe" aria-invalid={!!errors.author} />
+                 {errors.author && <p className="text-sm text-destructive mt-1">{errors.author.message}</p>}
+                 {state?.errors?.author && <p className="text-sm text-destructive mt-1">{state.errors.author[0]}</p>}
+              </div>
+               <div className="space-y-2">
+                <Label htmlFor="content">Your Comment</Label>
+                <Textarea id="content" {...register("content")} placeholder="Share your thoughts..." rows={2} aria-invalid={!!errors.content}/>
                  {errors.content && <p className="text-sm text-destructive mt-1">{errors.content.message}</p>}
                  {state?.errors?.content && <p className="text-sm text-destructive mt-1">{state.errors.content[0]}</p>}
               </div>
@@ -103,14 +104,6 @@ export function CommentSection({ updateId, comments }: CommentSectionProps) {
                 <SubmitButton />
               </div>
             </form>
-          ) : (
-            <div className="text-center text-muted-foreground py-4">
-              <p>You must be logged in to comment.</p>
-              <Button asChild variant="link" className="mt-2">
-                <Link href="/login">Login to Comment</Link>
-              </Button>
-            </div>
-          )}
         </CardContent>
       </Card>
     </div>

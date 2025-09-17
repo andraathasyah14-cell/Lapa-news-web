@@ -14,6 +14,8 @@ const firebaseConfig = {
 
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 const db = getFirestore(app);
+// Auth is no longer used, but we'll keep the export to avoid breaking other files that might import it.
+// We can clean this up later.
 const auth = getAuth(app);
 
 export { app, db, auth };

@@ -7,7 +7,6 @@ import { UpdateCard } from '@/components/updates/update-card';
 import type { Update, Country } from '@/lib/definitions';
 import DeveloperCreditAlert from '@/components/layout/developer-credit-alert';
 import LapaClock from '@/components/layout/lapa-clock';
-import RegistrationAlert from '@/components/layout/registration-alert';
 import { Skeleton } from '@/components/ui/skeleton';
 
 function UpdateFeedSkeleton() {
@@ -48,7 +47,6 @@ export default function Home() {
   return (
     <div className="space-y-8">
       <DeveloperCreditAlert />
-      <RegistrationAlert countries={countries} />
       <LapaClock />
       <h1 className="font-headline text-4xl font-bold text-primary md:text-5xl">
         Global Update Feed
