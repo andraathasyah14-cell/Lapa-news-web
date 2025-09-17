@@ -16,18 +16,36 @@ import { Badge } from '../ui/badge';
 
 export default function RulesModal() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    const rulesAccepted = sessionStorage.getItem('rulesAccepted');
-    if (!rulesAccepted) {
-      setIsOpen(true);
+    setIsMounted(true);
+    // This code now runs only on the client, after the component has mounted.
+    try {
+      const rulesAccepted = sessionStorage.getItem('rulesAccepted');
+      if (!rulesAccepted) {
+        setIsOpen(true);
+      }
+    } catch (e) {
+      // sessionStorage can be unavailable in some environments (e.g. server-side)
+      // or private browsing modes.
+      console.error("Could not access sessionStorage:", e);
     }
   }, []);
 
   const handleAccept = () => {
-    sessionStorage.setItem('rulesAccepted', 'true');
-    setIsOpen(false);
+    try {
+      sessionStorage.setItem('rulesAccepted', 'true');
+      setIsOpen(false);
+    } catch (e) {
+      console.error("Could not access sessionStorage:", e);
+      setIsOpen(false);
+    }
   };
+
+  if (!isMounted) {
+    return null;
+  }
 
   return (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
