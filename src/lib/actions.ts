@@ -19,11 +19,21 @@ export async function addCountry(country: Omit<Country, 'id'>) {
 }
 
 export async function addUpdate(update: Omit<Update, 'id' | 'comments'>) {
-    const newUpdateData = {
+    const newUpdateData: any = {
         ...update,
         createdAt: new Date(update.createdAt),
         comments: [],
     };
+    
+    // Firestore doesn't accept undefined values.
+    // If coverImage is undefined, we don't include it in the object.
+    if (update.coverImage !== undefined) {
+        newUpdateData.coverImage = update.coverImage;
+    } else {
+        // Explicitly remove it if it's undefined, just in case.
+        delete newUpdateData.coverImage;
+    }
+
     await addDoc(collection(db, 'updates'), newUpdateData);
 }
 
