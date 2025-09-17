@@ -1,8 +1,18 @@
 
 'use client';
 
+import { Suspense } from 'react';
 import LoginForm from '@/components/auth/login-form';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+
+function LoginFormSkeleton() {
+  return (
+    <div className="space-y-4">
+      <Skeleton className="h-10 w-full" />
+    </div>
+  )
+}
 
 export default function LoginPage() {
   return (
@@ -19,7 +29,9 @@ export default function LoginPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <LoginForm />
+            <Suspense fallback={<LoginFormSkeleton />}>
+              <LoginForm />
+            </Suspense>
           </CardContent>
         </Card>
       </div>
