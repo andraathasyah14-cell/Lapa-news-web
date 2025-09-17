@@ -2,9 +2,9 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { onAuthStateChanged, GoogleAuthProvider, signInWithPopup, getRedirectResult, signOut, User } from 'firebase/auth';
+import { onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut, type User } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 interface AuthContextType {
   user: User | null;
@@ -21,25 +21,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const router = useRouter();
 
   useEffect(() => {
+    // onAuthStateChanged handles everything, including redirect results.
+    // There is no need to call getRedirectResult separately.
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       setLoading(false);
     });
 
-    // Also handle redirect result on initial load
-    getRedirectResult(auth)
-      .then((result) => {
-        if (result?.user) {
-          setUser(result.user);
-        }
-      })
-      .catch((error) => {
-        console.error("Error getting redirect result:", error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-
+    // Cleanup subscription on unmount
     return () => unsubscribe();
   }, []);
 
@@ -48,28 +37,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setLoading(true);
     try {
       const result = await signInWithPopup(auth, provider);
-      setUser(result.user);
+      // The user state will be updated by onAuthStateChanged, which is the
+      // single source of truth. After that, we can redirect.
       router.push(redirectUrl);
     } catch (error: any) {
-      // Don't log an error if the user closes the popup.
       if (error.code === 'auth/popup-closed-by-user') {
+        // User closed the popup, this isn't a real error.
         setLoading(false);
         return;
       }
       console.error("Error during Google sign-in:", error);
-    } finally {
-      // setLoading(false) is called in the catch block for the popup-closed case
-      // and here for the success case.
-      if (auth.currentUser) {
-        setLoading(false);
-      }
+      setLoading(false);
     }
   };
 
   const logout = async () => {
     try {
       await signOut(auth);
-      // setUser(null) is handled by onAuthStateChanged
+      // setUser(null) will be handled by onAuthStateChanged
       router.push('/');
     } catch (error) {
       console.error("Error during sign-out:", error);

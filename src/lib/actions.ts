@@ -2,13 +2,13 @@
 "use server";
 
 import { z } from "zod";
-import { getUpdateById } from "@/lib/data";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { generateMagazineCover, type GenerateMagazineCoverInput } from "@/ai/flows/generate-magazine-cover";
 import { collection, addDoc, doc, updateDoc, arrayUnion, Timestamp } from 'firebase/firestore';
 import { db } from './firebase';
 import type { Country, Update, Comment } from './definitions';
+import { getUpdateById } from './data';
 
 
 // --- WRITE OPERATIONS ---

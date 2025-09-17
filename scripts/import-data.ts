@@ -1,6 +1,6 @@
 
-import { addCountry, addUpdate, getCountries } from '../src/lib/data';
-import 'dotenv/config'; // Make sure to load environment variables
+import { addCountry, addUpdate } from '../src/lib/actions';
+import { getCountries } from '../src/lib/data';
 
 const countryData = [
     { name: 'Republic of Eldoria', owner: 'Alice' },
