@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { registerCountryAction } from "@/lib/actions";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -38,8 +39,10 @@ export default function CountryRegistrationForm() {
   const [state, formAction] = useActionState(registerCountryAction, {
     message: "",
     errors: undefined,
+    success: false,
   });
   const { toast } = useToast();
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof CountrySchema>>({
     resolver: zodResolver(CountrySchema),
@@ -51,14 +54,20 @@ export default function CountryRegistrationForm() {
   });
 
   useEffect(() => {
-    if (state?.message && state.errors) {
+    if (state.success) {
+      toast({
+        title: "Success",
+        description: "Country registered successfully!",
+      });
+      router.push('/countries');
+    } else if (state.message && state.errors) {
        toast({
         variant: "destructive",
         title: "Error",
         description: state.message,
       });
     }
-  }, [state, toast]);
+  }, [state, toast, router]);
 
   return (
     <Form {...form}>

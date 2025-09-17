@@ -22,18 +22,23 @@ export async function registerCountryAction(prevState: any, formData: FormData) 
     return {
       errors: validatedFields.error.flatten().fieldErrors,
       message: "Validation failed.",
+      success: false,
     };
   }
 
   try {
     await addCountry(validatedFields.data);
   } catch (e) {
-    return { message: "Failed to register country." };
+    return { message: "Failed to register country.", success: false };
   }
 
   revalidatePath("/countries");
   revalidatePath("/");
-  redirect("/countries");
+  
+  return {
+      message: "Country registered successfully.",
+      success: true,
+  }
 }
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
