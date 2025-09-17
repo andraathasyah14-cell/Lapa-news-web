@@ -8,7 +8,7 @@ import { generateMagazineCover, type GenerateMagazineCoverInput } from "@/ai/flo
 import { collection, addDoc, doc, updateDoc, arrayUnion, Timestamp } from 'firebase/firestore';
 import { db } from './firebase';
 import type { Country, Update, Comment } from './definitions';
-import { getUpdateById } from './data';
+import { getUpdateById } from "./data";
 
 
 // --- WRITE OPERATIONS ---
@@ -207,6 +207,7 @@ export async function generateCoverAction(formData: FormData) {
   if (!update) {
     return { error: "Update not found." };
   }
+
 
   try {
     const input: GenerateMagazineCoverInput = {
