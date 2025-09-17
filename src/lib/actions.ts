@@ -116,7 +116,7 @@ export async function submitUpdateAction(prevState: any, formData: FormData) {
 
 
 const CommentSchema = z.object({
-  author: z.string().min(2, "Name must be at least 2 characters."),
+  author: z.string().min(1, "Author name cannot be empty"),
   content: z.string().min(1, "Comment cannot be empty."),
   updateId: z.string(),
 });

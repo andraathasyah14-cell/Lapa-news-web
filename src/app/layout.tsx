@@ -10,6 +10,7 @@ import { AppSidebar } from '@/components/layout/app-sidebar';
 import { Header } from '@/components/layout/header';
 import { Toaster } from "@/components/ui/toaster"
 import './globals.css';
+import { AuthProvider } from '@/hooks/use-auth';
 import { WhatsAppWarning } from '@/components/layout/whatsapp-warning';
 
 export const metadata: Metadata = {
@@ -35,29 +36,31 @@ export default async function RootLayout({
           <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
         </head>
         <body className="font-body antialiased">
-          <div className="fixed inset-0 z-[-1]">
-             <div className="absolute inset-0 bg-background" />
-             <div 
-                className="absolute inset-0" 
-                style={{ 
-                  backgroundImage: `url('${backgroundSvg}')`,
-                  maskImage: 'linear-gradient(rgba(0,0,0,0.25), black)'
-                }}
-             />
-          </div>
-          <SidebarProvider>
-            <Sidebar>
-              <AppSidebar />
-            </Sidebar>
-            <SidebarInset>
-              <Header />
-              <div className="p-4 md:p-8 pb-24">
-                {children}
-              </div>
-            </SidebarInset>
-          </SidebarProvider>
-          <Toaster />
-          <WhatsAppWarning />
+          <AuthProvider>
+            <div className="fixed inset-0 z-[-1]">
+               <div className="absolute inset-0 bg-background" />
+               <div 
+                  className="absolute inset-0" 
+                  style={{ 
+                    backgroundImage: `url('${backgroundSvg}')`,
+                    maskImage: 'linear-gradient(rgba(0,0,0,0.25), black)'
+                  }}
+               />
+            </div>
+            <SidebarProvider>
+              <Sidebar>
+                <AppSidebar />
+              </Sidebar>
+              <SidebarInset>
+                <Header />
+                <div className="p-4 md:p-8 pb-24">
+                  {children}
+                </div>
+              </SidebarInset>
+            </SidebarProvider>
+            <Toaster />
+            <WhatsAppWarning />
+          </AuthProvider>
         </body>
       </html>
     </JotaiProvider>

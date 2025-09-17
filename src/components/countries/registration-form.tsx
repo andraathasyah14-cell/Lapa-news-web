@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { registerCountryAction } from "@/lib/actions";
 import { useRouter } from "next/navigation";
+import type { User } from 'firebase/auth';
 
 import { Button } from "@/components/ui/button";
 import {
@@ -23,7 +24,7 @@ import { useToast } from "@/hooks/use-toast";
 
 const CountrySchema = z.object({
   name: z.string().min(3, 'Country name must be at least 3 characters.'),
-  owner: z.string().min(2, 'Owner name must be at least 2 characters.'),
+  owner: z.string(), // Owner will be passed programmatically
 });
 
 const STORAGE_KEY = "geopolitika_fantastica_registered";
@@ -37,7 +38,7 @@ function SubmitButton() {
   );
 }
 
-export default function CountryRegistrationForm() {
+export default function CountryRegistrationForm({ user }: { user: User }) {
   const [state, formAction] = useActionState(registerCountryAction, {
     message: "",
     errors: undefined,
@@ -50,7 +51,7 @@ export default function CountryRegistrationForm() {
     resolver: zodResolver(CountrySchema),
     defaultValues: {
       name: "",
-      owner: "",
+      owner: user.displayName ?? "Anonymous",
     },
     mode: 'onChange'
   });
@@ -61,11 +62,11 @@ export default function CountryRegistrationForm() {
         title: "Success",
         description: "Country registered successfully!",
       });
-      // Mark as registered in local storage
       if (typeof window !== 'undefined') {
         localStorage.setItem(STORAGE_KEY, "true");
       }
       router.push('/countries');
+      router.refresh(); 
     } else if (state.message && state.errors) {
        toast({
         variant: "destructive",
@@ -74,10 +75,15 @@ export default function CountryRegistrationForm() {
       });
     }
   }, [state, toast, router]);
+  
+  const actionWithOwner = (payload: FormData) => {
+    payload.append('owner', user.displayName ?? "Anonymous");
+    formAction(payload);
+  }
 
   return (
     <Form {...form}>
-      <form action={formAction} className="space-y-6">
+      <form action={actionWithOwner} className="space-y-6">
         <FormField
           control={form.control}
           name="name"
@@ -86,19 +92,6 @@ export default function CountryRegistrationForm() {
               <FormLabel>Country Name</FormLabel>
               <FormControl>
                 <Input placeholder="e.g., Republic of Eldoria" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="owner"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Owner Name</FormLabel>
-              <FormControl>
-                <Input placeholder="e.g., Alice" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

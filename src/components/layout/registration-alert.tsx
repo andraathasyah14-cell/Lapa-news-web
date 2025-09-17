@@ -6,22 +6,43 @@ import Link from "next/link";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/use-auth";
+import type { Country } from "@/lib/definitions";
 
-const STORAGE_KEY = "geopolitika_fantastica_registered";
+const STORAGE_KEY_DISMISSED = "geopolitika_fantastica_registration_alert_dismissed";
 
-export default function RegistrationAlert() {
+interface RegistrationAlertProps {
+    countries: Country[];
+}
+
+export default function RegistrationAlert({ countries }: RegistrationAlertProps) {
+  const { user, loading } = useAuth();
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    // This code runs only on the client
-    const hasRegistered = localStorage.getItem(STORAGE_KEY);
-    if (!hasRegistered) {
-      setIsVisible(true);
+    if (loading || !user) {
+      setIsVisible(false);
+      return;
     }
-  }, []);
+
+    const hasDismissed = localStorage.getItem(STORAGE_KEY_DISMISSED);
+    if (hasDismissed) {
+        setIsVisible(false);
+        return;
+    }
+    
+    const userOwnsCountry = countries.some(country => country.owner === user.displayName);
+    
+    if (!userOwnsCountry) {
+      setIsVisible(true);
+    } else {
+      setIsVisible(false);
+    }
+
+  }, [user, loading, countries]);
 
   const handleDismiss = () => {
-    localStorage.setItem(STORAGE_KEY, "true");
+    localStorage.setItem(STORAGE_KEY_DISMISSED, "true");
     setIsVisible(false);
   };
 
@@ -32,7 +53,7 @@ export default function RegistrationAlert() {
   return (
     <Alert className="bg-card/80 border-accent/50 relative pr-12 text-card-foreground backdrop-blur-sm">
       <AlertCircle className="h-4 w-4 text-primary" />
-      <AlertTitle className="font-headline text-primary">Welcome to the World Stage!</AlertTitle>
+      <AlertTitle className="font-headline text-primary">Welcome to the World Stage, {user?.displayName}!</AlertTitle>
       <AlertDescription className="text-card-foreground/80">
         It looks like you haven't founded a nation yet.{" "}
         <Link href="/register-country" className="font-bold text-primary/90 underline hover:text-primary">

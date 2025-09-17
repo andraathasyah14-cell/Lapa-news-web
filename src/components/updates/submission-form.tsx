@@ -96,11 +96,11 @@ export default function UpdateSubmissionForm({ countries }: { countries: Country
           name="countryId"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Country</FormLabel>
+              <FormLabel>Your Country</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a country to post from" />
+                    <SelectValue placeholder="Select one of your countries" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>

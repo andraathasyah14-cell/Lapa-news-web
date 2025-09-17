@@ -10,10 +10,11 @@ import { z } from "zod";
 import { addCommentAction } from "@/lib/actions";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "../ui/card";
 import { UserIcon } from "../icons";
 import { Avatar, AvatarFallback } from "../ui/avatar";
+import { useAuth } from "@/hooks/use-auth";
+import Link from "next/link";
 
 interface CommentSectionProps {
   updateId: string;
@@ -21,20 +22,20 @@ interface CommentSectionProps {
 }
 
 const CommentSchema = z.object({
-  author: z.string().min(2, "Name must be at least 2 characters."),
   content: z.string().min(1, "Comment cannot be empty."),
 });
 
 function SubmitButton() {
   const { pending } = useFormStatus();
   return (
-    <Button size="sm" type="submit" disabled={pending} className="w-full sm:w-auto">
+    <Button size="sm" type="submit" disabled={pending}>
       {pending ? "Posting..." : "Post Comment"}
     </Button>
   );
 }
 
 export function CommentSection({ updateId, comments }: CommentSectionProps) {
+  const { user } = useAuth();
   const [state, formAction] = useActionState(addCommentAction, {
     message: "",
     errors: undefined,
@@ -43,7 +44,7 @@ export function CommentSection({ updateId, comments }: CommentSectionProps) {
   const formRef = useRef<HTMLFormElement>(null);
   const { register, formState: { errors }, reset } = useForm<z.infer<typeof CommentSchema>>({
     resolver: zodResolver(CommentSchema),
-    defaultValues: { author: "", content: "" },
+    defaultValues: { content: "" },
   });
 
   useEffect(() => {
@@ -52,6 +53,12 @@ export function CommentSection({ updateId, comments }: CommentSectionProps) {
       formRef.current?.reset();
     }
   }, [state, reset]);
+
+  const actionWithAuthor = (payload: FormData) => {
+      if (!user) return;
+      payload.append('author', user.displayName ?? 'Anonymous');
+      formAction(payload);
+  }
 
   return (
     <div className="space-y-6 pt-4">
@@ -83,25 +90,27 @@ export function CommentSection({ updateId, comments }: CommentSectionProps) {
 
       <Card className="bg-card/50 border-border/50">
         <CardContent className="pt-6">
-          <form ref={formRef} action={formAction} className="space-y-4">
-            <h4 className="text-md font-semibold text-card-foreground">Add a comment</h4>
-            <input type="hidden" name="updateId" value={updateId} />
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="sm:col-span-1">
-                <Input {...register("author")} placeholder="Your Name" aria-invalid={!!errors.author} />
-                {errors.author && <p className="text-sm text-destructive mt-1">{errors.author.message}</p>}
-                 {state?.errors?.author && <p className="text-sm text-destructive mt-1">{state.errors.author[0]}</p>}
-              </div>
-              <div className="sm:col-span-2">
-                <Textarea {...register("content")} placeholder="Share your thoughts..." rows={1} aria-invalid={!!errors.content}/>
+          {user ? (
+            <form ref={formRef} action={actionWithAuthor} className="space-y-4">
+              <h4 className="text-md font-semibold text-card-foreground">Add a comment as {user.displayName}</h4>
+              <input type="hidden" name="updateId" value={updateId} />
+              <div>
+                <Textarea {...register("content")} placeholder="Share your thoughts..." rows={2} aria-invalid={!!errors.content}/>
                  {errors.content && <p className="text-sm text-destructive mt-1">{errors.content.message}</p>}
                  {state?.errors?.content && <p className="text-sm text-destructive mt-1">{state.errors.content[0]}</p>}
               </div>
+              <div className="flex justify-end">
+                <SubmitButton />
+              </div>
+            </form>
+          ) : (
+            <div className="text-center text-muted-foreground py-4">
+              <p>You must be logged in to comment.</p>
+              <Button asChild variant="link" className="mt-2">
+                <Link href="/login">Login to Comment</Link>
+              </Button>
             </div>
-            <div className="flex justify-end">
-              <SubmitButton />
-            </div>
-          </form>
+          )}
         </CardContent>
       </Card>
     </div>

@@ -17,7 +17,7 @@ export default async function Home() {
   return (
     <div className="space-y-8">
       <DeveloperCreditAlert />
-      <RegistrationAlert />
+      <RegistrationAlert countries={countries} />
       <LapaClock />
       <h1 className="font-headline text-4xl font-bold text-primary md:text-5xl">
         Global Update Feed
