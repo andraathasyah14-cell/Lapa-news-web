@@ -11,6 +11,7 @@ import { Toaster } from "@/components/ui/toaster"
 import './globals.css';
 import { WhatsAppWarning } from '@/components/layout/whatsapp-warning';
 import { Providers } from '@/components/layout/providers';
+import RulesModal from '@/components/layout/rules-modal';
 
 export const metadata: Metadata = {
   title: 'UNITED LAPA NATIONS',
@@ -58,6 +59,7 @@ export default function RootLayout({
           </SidebarProvider>
           <Toaster />
           <WhatsAppWarning />
+          <RulesModal />
         </Providers>
       </body>
     </html>
