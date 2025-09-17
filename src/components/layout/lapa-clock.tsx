@@ -12,13 +12,13 @@ const LAPA_DAYS_IN_MONTH = 30;
 const LAPA_MONTHS_IN_YEAR = 12;
 
 // Conversion factors based on: 1 Lapa Day = 2 Earth Hours
-const LAPA_SECOND_IN_MS = (2 * 60 * 60 * 1000) / (24 * 60 * 60); // ~0.083 Earth seconds
-const LAPA_MINUTE_IN_MS = LAPA_SECOND_IN_MS * 60; // ~5 Earth seconds
-const LAPA_HOUR_IN_MS = LAPA_MINUTE_IN_MS * 60; // 5 Earth minutes
-const LAPA_DAY_IN_MS = LAPA_HOUR_IN_MS * 24; // 2 Earth hours
+const LAPA_SECOND_IN_MS = (2 * 60 * 60 * 1000) / (24 * 60 * 60); 
+const LAPA_MINUTE_IN_MS = LAPA_SECOND_IN_MS * 60;
+const LAPA_HOUR_IN_MS = LAPA_MINUTE_IN_MS * 60;
+const LAPA_DAY_IN_MS = LAPA_HOUR_IN_MS * 24;
 
-const LAPA_MONTH_IN_MS = LAPA_DAY_IN_MS * LAPA_DAYS_IN_MONTH; // 2.5 Earth days
-const LAPA_YEAR_IN_MS = LAPA_MONTH_IN_MS * LAPA_MONTHS_IN_YEAR; // 30 Earth days
+const LAPA_MONTH_IN_MS = LAPA_DAY_IN_MS * LAPA_DAYS_IN_MONTH;
+const LAPA_YEAR_IN_MS = LAPA_MONTH_IN_MS * LAPA_MONTHS_IN_YEAR;
 
 
 function calculateLapaTime(currentRealDate: Date) {
@@ -71,8 +71,11 @@ function calculateLapaTime(currentRealDate: Date) {
 
 export default function LapaClock() {
     const [lapaTime, setLapaTime] = useState({ year: 0, month: '', day: 0, hour: 0, minute: 0, second: 0 });
+    const [isMounted, setIsMounted] = useState(false);
+
 
     useEffect(() => {
+        setIsMounted(true);
         // Set initial time right away
         setLapaTime(calculateLapaTime(new Date()));
 
@@ -83,8 +86,13 @@ export default function LapaClock() {
         return () => clearInterval(timer);
     }, []);
 
-    if (lapaTime.month === '') { // Use a more reliable check for initialization
-        return null; // Don't render until client-side hydration and calculation is complete
+    if (!isMounted || lapaTime.month === '') {
+        return (
+            <div className="font-mono text-xs p-3 rounded-lg border border-accent/50 bg-card/80 text-card-foreground/90 backdrop-blur-sm flex items-center justify-center gap-4">
+                 <Clock className="h-5 w-5 text-primary" />
+                 <span>Loading Lapa Time...</span>
+            </div>
+        );
     }
 
     return (
