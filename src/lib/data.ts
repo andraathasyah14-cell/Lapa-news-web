@@ -52,15 +52,21 @@ export async function getUpdates(count?: number): Promise<Update[]> {
 
   return updateSnapshot.docs.map(doc => {
     const data = doc.data();
+    // Ensure createdAt from data is a Timestamp before calling toDate()
+    const createdAtDate = data.createdAt instanceof Timestamp ? data.createdAt.toDate() : new Date(data.createdAt);
+    
     return {
       id: doc.id,
       ...data,
       // Convert Firestore Timestamps to ISO strings
-      createdAt: (data.createdAt as Timestamp).toDate().toISOString(),
-      comments: data.comments.map((comment: any) => ({
-        ...comment,
-        createdAt: (comment.createdAt as Timestamp).toDate().toISOString(),
-      })),
+      createdAt: createdAtDate.toISOString(),
+      comments: (data.comments || []).map((comment: any) => {
+        const commentCreatedAtDate = comment.createdAt instanceof Timestamp ? comment.createdAt.toDate() : new Date(comment.createdAt);
+        return {
+          ...comment,
+          createdAt: commentCreatedAtDate.toISOString(),
+        }
+      }),
     } as Update;
   });
 }
@@ -76,14 +82,18 @@ export async function getUpdatesByCountryId(countryId: string): Promise<Update[]
 
     return updateSnapshot.docs.map(doc => {
         const data = doc.data();
+        const createdAtDate = data.createdAt instanceof Timestamp ? data.createdAt.toDate() : new Date(data.createdAt);
         return {
-        id: doc.id,
-        ...data,
-        createdAt: (data.createdAt as Timestamp).toDate().toISOString(),
-        comments: data.comments.map((comment: any) => ({
-            ...comment,
-            createdAt: (comment.createdAt as Timestamp).toDate().toISOString(),
-        })),
+          id: doc.id,
+          ...data,
+          createdAt: createdAtDate.toISOString(),
+          comments: (data.comments || []).map((comment: any) => {
+             const commentCreatedAtDate = comment.createdAt instanceof Timestamp ? comment.createdAt.toDate() : new Date(comment.createdAt);
+            return {
+                ...comment,
+                createdAt: commentCreatedAtDate.toISOString(),
+            }
+          }),
         } as Update;
     });
 }
@@ -94,14 +104,18 @@ export async function getUpdateById(id: string): Promise<Update | undefined> {
 
   if (updateSnap.exists()) {
     const data = updateSnap.data();
+    const createdAtDate = data.createdAt instanceof Timestamp ? data.createdAt.toDate() : new Date(data.createdAt);
     return {
       id: updateSnap.id,
       ...data,
-      createdAt: (data.createdAt as Timestamp).toDate().toISOString(),
-      comments: data.comments.map((comment: any) => ({
-        ...comment,
-        createdAt: (comment.createdAt as Timestamp).toDate().toISOString(),
-      })),
+      createdAt: createdAtDate.toISOString(),
+      comments: (data.comments || []).map((comment: any) => {
+        const commentCreatedAtDate = comment.createdAt instanceof Timestamp ? comment.createdAt.toDate() : new Date(comment.createdAt);
+        return {
+            ...comment,
+            createdAt: commentCreatedAtDate.toISOString(),
+        }
+      }),
     } as Update;
   }
   return undefined;
@@ -114,7 +128,13 @@ export async function addUpdate(update: Omit<Update, 'id' | 'comments'>) {
         comments: [],
     };
     const docRef = await addDoc(collection(db, 'updates'), newUpdateData);
-    return { id: docRef.id, ...newUpdateData } as unknown as Update;
+    const docSnap = await getDoc(docRef);
+    const data = docSnap.data();
+    return { 
+        id: docRef.id,
+        ...data,
+        createdAt: (data?.createdAt as Timestamp).toDate().toISOString()
+    } as Update;
 }
 
 

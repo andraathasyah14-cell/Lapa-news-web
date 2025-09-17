@@ -26,6 +26,8 @@ const CountrySchema = z.object({
   owner: z.string().min(2, 'Owner name must be at least 2 characters.'),
 });
 
+const STORAGE_KEY = "geopolitika_fantastica_registered";
+
 function SubmitButton() {
   const { pending } = useFormStatus();
   return (
@@ -59,6 +61,10 @@ export default function CountryRegistrationForm() {
         title: "Success",
         description: "Country registered successfully!",
       });
+      // Mark as registered in local storage
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(STORAGE_KEY, "true");
+      }
       router.push('/countries');
     } else if (state.message && state.errors) {
        toast({

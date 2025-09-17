@@ -6,9 +6,7 @@ import { UpdateCard } from '@/components/updates/update-card';
 import type { Update, Country } from '@/lib/definitions';
 import DeveloperCreditAlert from '@/components/layout/developer-credit-alert';
 import LapaClock from '@/components/layout/lapa-clock';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { HelpCircle } from 'lucide-react';
-import Link from 'next/link';
+import RegistrationAlert from '@/components/layout/registration-alert';
 
 export default async function Home() {
   const [updates, countries] = await Promise.all([
@@ -19,6 +17,7 @@ export default async function Home() {
   return (
     <div className="space-y-8">
       <DeveloperCreditAlert />
+      <RegistrationAlert />
       <LapaClock />
       <h1 className="font-headline text-4xl font-bold text-primary md:text-5xl">
         Global Update Feed

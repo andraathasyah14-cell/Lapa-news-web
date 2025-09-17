@@ -28,8 +28,13 @@ export async function registerCountryAction(prevState: any, formData: FormData) 
 
   try {
     await addCountry(validatedFields.data);
-  } catch (e) {
-    return { message: "Failed to register country.", success: false };
+  } catch (e: any) {
+    console.error("Firebase Error:", e);
+    // More specific error message
+    if (e.code === 'permission-denied') {
+        return { message: "Failed to register country. Permission denied. Please check Firestore rules.", success: false };
+    }
+    return { message: `Failed to register country. Error: ${e.message}`, success: false };
   }
 
   revalidatePath("/countries");
@@ -100,8 +105,9 @@ export async function submitUpdateAction(prevState: any, formData: FormData) {
       coverImage: coverImageUrl,
       createdAt: new Date().toISOString(),
     });
-  } catch (e) {
-    return { message: "Failed to submit update." };
+  } catch (e: any) {
+    console.error("Firebase Error:", e);
+    return { message: `Failed to submit update. Error: ${e.message}` };
   }
 
   revalidatePath("/");
@@ -133,11 +139,14 @@ export async function addCommentAction(prevState: any, formData: FormData) {
 
   try {
     await addCommentToUpdate(updateId, commentData);
-  } catch (e) {
-    return { message: "Failed to add comment." };
+  } catch (e: any) {
+    console.error("Firebase Error:", e);
+    return { message: `Failed to add comment. Error: ${e.message}` };
   }
 
   revalidatePath("/");
+  revalidatePath(`/countries/${formData.get('countryId')}`);
+  return { message: "Comment added." };
 }
 
 const MagazineCoverSchema = z.object({
