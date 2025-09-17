@@ -1,6 +1,5 @@
 
 import type { Metadata } from 'next';
-import { Provider as JotaiProvider } from 'jotai';
 import {
   Sidebar,
   SidebarInset,
@@ -10,15 +9,15 @@ import { AppSidebar } from '@/components/layout/app-sidebar';
 import { Header } from '@/components/layout/header';
 import { Toaster } from "@/components/ui/toaster"
 import './globals.css';
-import { AuthProvider } from '@/hooks/use-auth';
 import { WhatsAppWarning } from '@/components/layout/whatsapp-warning';
+import { Providers } from '@/components/layout/providers';
 
 export const metadata: Metadata = {
   title: 'UNITED LAPA NATIONS',
   description: 'Craft and chronicle your own fictional nations.',
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -35,34 +34,32 @@ export default async function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=PT+Sans:wght@400;700&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased">
-        <JotaiProvider>
-          <AuthProvider>
-            <div className="fixed inset-0 z-[-1]">
-               <div className="absolute inset-0 bg-background" />
-               <div 
-                  className="absolute inset-0" 
-                  style={{ 
-                    backgroundImage: `url('${backgroundSvg}')`,
-                    maskImage: 'linear-gradient(rgba(0,0,0,0.25), black)'
-                  }}
-               />
-            </div>
-            <SidebarProvider>
-              <Sidebar>
-                <AppSidebar />
-              </Sidebar>
-              <SidebarInset>
-                <Header />
-                <div className="p-4 md:p-8 pb-24">
-                  {children}
-                </div>
-              </SidebarInset>
-            </SidebarProvider>
-            <Toaster />
-            <WhatsAppWarning />
-          </AuthProvider>
-        </JotaiProvider>
+        <Providers>
+          <div className="fixed inset-0 z-[-1]">
+              <div className="absolute inset-0 bg-background" />
+              <div 
+                className="absolute inset-0" 
+                style={{ 
+                  backgroundImage: `url('${backgroundSvg}')`,
+                  maskImage: 'linear-gradient(rgba(0,0,0,0.25), black)'
+                }}
+              />
+          </div>
+          <SidebarProvider>
+            <Sidebar>
+              <AppSidebar />
+            </Sidebar>
+            <SidebarInset>
+              <Header />
+              <div className="p-4 md:p-8 pb-24">
+                {children}
+              </div>
+            </SidebarInset>
+          </SidebarProvider>
+          <Toaster />
+          <WhatsAppWarning />
+        </Providers>
       </body>
     </html>
-
-    
+  );
+}

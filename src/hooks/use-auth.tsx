@@ -53,11 +53,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch (error: any) {
       // Don't log an error if the user closes the popup.
       if (error.code === 'auth/popup-closed-by-user') {
+        setLoading(false);
         return;
       }
       console.error("Error during Google sign-in:", error);
     } finally {
-      setLoading(false);
+      // setLoading(false) is called in the catch block for the popup-closed case
+      // and here for the success case.
+      if (auth.currentUser) {
+        setLoading(false);
+      }
     }
   };
 
