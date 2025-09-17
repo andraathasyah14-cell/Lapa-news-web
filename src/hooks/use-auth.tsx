@@ -21,8 +21,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const router = useRouter();
 
   useEffect(() => {
-    // onAuthStateChanged handles everything, including redirect results.
-    // There is no need to call getRedirectResult separately.
+    // onAuthStateChanged handles all auth state changes, making it the source of truth.
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       setLoading(false);
@@ -36,10 +35,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const provider = new GoogleAuthProvider();
     setLoading(true);
     try {
-      const result = await signInWithPopup(auth, provider);
-      // The user state will be updated by onAuthStateChanged, which is the
-      // single source of truth. After that, we can redirect.
+      await signInWithPopup(auth, provider);
+      // The user state will be updated by onAuthStateChanged. 
+      // After that, we can redirect.
       router.push(redirectUrl);
+      router.refresh(); // Force a refresh to ensure server components get the new auth state
     } catch (error: any) {
       if (error.code === 'auth/popup-closed-by-user') {
         // User closed the popup, this isn't a real error.
@@ -56,6 +56,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       await signOut(auth);
       // setUser(null) will be handled by onAuthStateChanged
       router.push('/');
+      router.refresh(); // Force a refresh to ensure server components get the new auth state
     } catch (error) {
       console.error("Error during sign-out:", error);
     }

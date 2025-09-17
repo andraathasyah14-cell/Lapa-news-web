@@ -105,6 +105,8 @@ async function main() {
     await importUpdates();
 }
 
+// This check ensures that the script only runs when executed directly
+// and not when imported by Next.js build process.
 if (require.main === module) {
   main().catch(console.error).then(() => {
       console.log('\nData import complete. Press Ctrl+C to exit.');

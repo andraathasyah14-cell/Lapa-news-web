@@ -1,23 +1,69 @@
 
-'use server';
+'use client';
 
+import { useState, useEffect } from 'react';
 import { getCountryById, getUpdatesByCountryId } from '@/lib/data';
 import type { Country, Update } from '@/lib/definitions';
 import { notFound } from 'next/navigation';
 import { UpdateCard } from '@/components/updates/update-card';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { User } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
 
-export default async function CountryProfilePage({ params }: { params: { id: string } }) {
-  const country = await getCountryById(params.id);
+function ProfilePageSkeleton() {
+    return (
+        <div className="space-y-8">
+            <Card className="bg-card/90">
+                <CardHeader>
+                    <Skeleton className="h-12 w-3/4" />
+                    <Skeleton className="h-4 w-1/4 mt-2" />
+                </CardHeader>
+            </Card>
+            <Skeleton className="h-10 w-1/3" />
+            <div className="grid grid-cols-1 gap-8">
+                <Skeleton className="h-48 w-full" />
+                <Skeleton className="h-48 w-full" />
+            </div>
+        </div>
+    );
+}
+
+export default function CountryProfilePage({ params }: { params: { id: string } }) {
+  const [country, setCountry] = useState<Country | null>(null);
+  const [updates, setUpdates] = useState<Update[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const countryData = await getCountryById(params.id);
+        if (!countryData) {
+          notFound();
+          return;
+        }
+        setCountry(countryData);
+        
+        const updatesData = await getUpdatesByCountryId(countryData.id);
+        setUpdates(updatesData);
+      } catch (error) {
+        console.error("Failed to fetch country data:", error);
+        // notFound(); // Or show an error state
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, [params.id]);
+  
+  if (loading) {
+    return <ProfilePageSkeleton />;
+  }
   
   if (!country) {
-    notFound();
+    // This case will be handled by notFound() in useEffect, but as a fallback:
+    return <p>Country not found.</p>;
   }
-
-  const [updates, allCountries] = await Promise.all([
-    getUpdatesByCountryId(country.id),
-  ]);
 
   return (
     <div className="space-y-8">

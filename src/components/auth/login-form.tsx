@@ -17,16 +17,16 @@ export default function LoginForm() {
     setError(null);
     try {
       const redirectUrl = searchParams.get('redirect') || '/';
+      // loginWithGoogle will handle redirection after successful login
       await loginWithGoogle(redirectUrl);
-      // The redirection is now handled inside loginWithGoogle after successful login
     } catch (err: any) {
       console.error("Login failed:", err);
       setError('Failed to login with Google. Please try again.');
     }
   };
   
-  // This effect is no longer strictly necessary as redirection happens in loginWithGoogle
-  // but can be kept as a fallback for when the user is already logged in.
+  // This effect handles the case where a user is already logged in
+  // when they land on the login page.
   useEffect(() => {
     if (user) {
         const redirectUrl = searchParams.get('redirect') || '/';

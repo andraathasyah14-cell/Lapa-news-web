@@ -1,6 +1,7 @@
 
-'use server';
+'use client';
 
+import { useState, useEffect } from 'react';
 import { getCountries } from "@/lib/data";
 import {
   Table,
@@ -15,9 +16,48 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { PlusCircle } from "lucide-react";
 import type { Country } from "@/lib/definitions";
+import { Skeleton } from '@/components/ui/skeleton';
 
-export default async function CountriesPage() {
-  const countries: Country[] = await getCountries();
+function CountriesTableSkeleton() {
+    return (
+        <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
+            <Table>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead className="w-[40%]">Country Name</TableHead>
+                        <TableHead>Owner</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {[...Array(5)].map((_, i) => (
+                        <TableRow key={i}>
+                            <TableCell><Skeleton className="h-5 w-3/4" /></TableCell>
+                            <TableCell><Skeleton className="h-5 w-1/2" /></TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+        </div>
+    );
+}
+
+export default function CountriesPage() {
+  const [countries, setCountries] = useState<Country[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const countriesData = await getCountries();
+        setCountries(countriesData);
+      } catch (error) {
+        console.error("Failed to fetch countries:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
 
   return (
     <div className="space-y-8">
@@ -33,39 +73,43 @@ export default async function CountriesPage() {
         </Button>
       </div>
 
-      <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[40%]">Country Name</TableHead>
-              <TableHead>Owner</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-             {countries.length > 0 ? (
-              countries.map((country) => (
-                <TableRow key={country.id}>
-                  <TableCell className="font-medium">
-                    <Link href={`/countries/${country.id}`} className="hover:underline text-primary/90 hover:text-primary font-semibold">
-                      {country.name}
-                    </Link>
-                  </TableCell>
-                  <TableCell>{country.owner}</TableCell>
-                </TableRow>
-              ))
-            ) : (
+      {loading ? (
+        <CountriesTableSkeleton />
+      ) : (
+        <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
+          <Table>
+            <TableHeader>
               <TableRow>
-                <TableCell colSpan={2} className="text-center">
-                  No countries have been registered yet.
-                </TableCell>
+                <TableHead className="w-[40%]">Country Name</TableHead>
+                <TableHead>Owner</TableHead>
               </TableRow>
+            </TableHeader>
+            <TableBody>
+              {countries.length > 0 ? (
+                countries.map((country) => (
+                  <TableRow key={country.id}>
+                    <TableCell className="font-medium">
+                      <Link href={`/countries/${country.id}`} className="hover:underline text-primary/90 hover:text-primary font-semibold">
+                        {country.name}
+                      </Link>
+                    </TableCell>
+                    <TableCell>{country.owner}</TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={2} className="text-center">
+                    No countries have been registered yet.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+            {countries.length === 0 && (
+              <TableCaption>No countries have been registered yet.</TableCaption>
             )}
-          </TableBody>
-          {countries.length === 0 && (
-             <TableCaption>No countries have been registered yet.</TableCaption>
-          )}
-        </Table>
-      </div>
+          </Table>
+        </div>
+      )}
     </div>
   );
 }

@@ -15,8 +15,7 @@ import { getUpdateById } from "./data";
 
 export async function addCountry(country: Omit<Country, 'id'>) {
   const countriesCol = collection(db, 'countries');
-  const docRef = await addDoc(countriesCol, country);
-  return { id: docRef.id, ...country };
+  await addDoc(countriesCol, country);
 }
 
 export async function addUpdate(update: Omit<Update, 'id' | 'comments'>) {
@@ -76,7 +75,7 @@ export async function registerCountryAction(prevState: any, formData: FormData) 
 
   revalidatePath("/countries");
   revalidatePath("/");
-  
+  // Redirecting will be handled by the client-side form upon success
   return {
       message: "Country registered successfully.",
       success: true,
