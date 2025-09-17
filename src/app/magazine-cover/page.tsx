@@ -1,11 +1,11 @@
 
 'use server';
 import MagazineCoverGenerator from "@/components/magazine/cover-generator";
-import { getUpdates } from "@/lib/data";
+import { getUpdatesAction } from "@/lib/actions";
 import type { Update } from "@/lib/definitions";
 
 export default async function MagazineCoverPage() {
-    const updates: Update[] = await getUpdates();
+    const updates: Update[] = await getUpdatesAction();
 
     return (
         <div className="space-y-8">

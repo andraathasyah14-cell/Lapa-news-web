@@ -1,14 +1,13 @@
 
-import { getCountries } from "@/lib/data";
+import { getCountriesAction } from "@/lib/actions";
 import type { Country } from "@/lib/definitions";
 import UpdateSubmissionForm from "@/components/updates/submission-form";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
-// This tells Next.js to always render this page dynamically
 export const revalidate = 0;
 
 export default async function SubmitUpdatePage() {
-    const allCountries: Country[] = await getCountries();
+    const allCountries: Country[] = await getCountriesAction();
 
     return (
         <div className="max-w-2xl mx-auto">

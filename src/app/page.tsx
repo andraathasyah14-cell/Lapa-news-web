@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getCountries, getUpdates } from '@/lib/data';
+import { getUpdatesAction, getCountriesAction } from '@/lib/actions';
 import { UpdateCard } from '@/components/updates/update-card';
 import type { Update, Country } from '@/lib/definitions';
 import DeveloperCreditAlert from '@/components/layout/developer-credit-alert';
@@ -29,14 +29,13 @@ export default function Home() {
     async function fetchData() {
       try {
         const [updatesData, countriesData] = await Promise.all([
-          getUpdates(),
-          getCountries(),
+          getUpdatesAction(),
+          getCountriesAction(),
         ]);
         setUpdates(updatesData);
         setCountries(countriesData);
       } catch (error) {
         console.error("Failed to fetch data:", error);
-        // Optionally, set an error state here to show an error message
       } finally {
         setLoading(false);
       }

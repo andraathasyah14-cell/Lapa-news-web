@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getCountryById, getUpdatesByCountryId } from '@/lib/data';
+import { getCountryByIdAction, getUpdatesByCountryIdAction } from '@/lib/actions';
 import type { Country, Update } from '@/lib/definitions';
 import { notFound } from 'next/navigation';
 import { UpdateCard } from '@/components/updates/update-card';
@@ -36,18 +36,17 @@ export default function CountryProfilePage({ params }: { params: { id: string } 
   useEffect(() => {
     async function fetchData() {
       try {
-        const countryData = await getCountryById(params.id);
+        const countryData = await getCountryByIdAction(params.id);
         if (!countryData) {
           notFound();
           return;
         }
         setCountry(countryData);
         
-        const updatesData = await getUpdatesByCountryId(countryData.id);
+        const updatesData = await getUpdatesByCountryIdAction(countryData.id);
         setUpdates(updatesData);
       } catch (error) {
         console.error("Failed to fetch country data:", error);
-        // notFound(); // Or show an error state
       } finally {
         setLoading(false);
       }
@@ -61,8 +60,8 @@ export default function CountryProfilePage({ params }: { params: { id: string } 
   }
   
   if (!country) {
-    // This case will be handled by notFound() in useEffect, but as a fallback:
-    return <p>Country not found.</p>;
+    notFound();
+    return null;
   }
 
   return (

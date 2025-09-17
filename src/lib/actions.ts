@@ -5,53 +5,135 @@ import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { generateMagazineCover, type GenerateMagazineCoverInput } from "@/ai/flows/generate-magazine-cover";
-import { collection, addDoc, doc, updateDoc, arrayUnion, Timestamp } from 'firebase/firestore';
-import { db } from './firebase';
 import type { Country, Update, Comment } from './definitions';
-import { getUpdateById } from "./data";
+import { db } from "./firebase-admin";
+import { FieldValue } from "firebase-admin/firestore";
 
+// --- SERVER-SIDE DATA FETCHING ACTIONS ---
+
+export async function getCountriesAction(): Promise<Country[]> {
+  const countriesCol = db.collection('countries');
+  const countrySnapshot = await countriesCol.orderBy('name').get();
+  return countrySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Country));
+}
+
+export async function getCountryByIdAction(id: string): Promise<Country | undefined> {
+  const countryRef = db.collection('countries').doc(id);
+  const countrySnap = await countryRef.get();
+  if (countrySnap.exists) {
+    return { id: countrySnap.id, ...countrySnap.data() } as Country;
+  }
+  return undefined;
+}
+
+export async function getUpdatesAction(count?: number): Promise<Update[]> {
+  let query: FirebaseFirestore.Query<FirebaseFirestore.DocumentData> = db.collection('updates').orderBy('createdAt', 'desc');
+  if (count) {
+    query = query.limit(count);
+  }
+  const updateSnapshot = await query.get();
+
+  return updateSnapshot.docs.map(doc => {
+    const data = doc.data();
+    const createdAtDate = data.createdAt.toDate();
+    
+    return {
+      id: doc.id,
+      ...data,
+      createdAt: createdAtDate.toISOString(),
+      comments: (data.comments || []).map((comment: any) => {
+        const commentCreatedAtDate = comment.createdAt.toDate();
+        return {
+          ...comment,
+          createdAt: commentCreatedAtDate.toISOString(),
+        }
+      }),
+    } as Update;
+  });
+}
+
+export async function getUpdatesByCountryIdAction(countryId: string): Promise<Update[]> {
+    const updatesCol = db.collection('updates');
+    const q = updatesCol.where('countryId', '==', countryId).orderBy('createdAt', 'desc');
+    const updateSnapshot = await q.get();
+
+    return updateSnapshot.docs.map(doc => {
+        const data = doc.data();
+        const createdAtDate = data.createdAt.toDate();
+        return {
+          id: doc.id,
+          ...data,
+          createdAt: createdAtDate.toISOString(),
+          comments: (data.comments || []).map((comment: any) => {
+             const commentCreatedAtDate = comment.createdAt.toDate();
+            return {
+                ...comment,
+                createdAt: commentCreatedAtDate.toISOString(),
+            }
+          }),
+        } as Update;
+    });
+}
+
+async function getUpdateById(id: string): Promise<Update | undefined> {
+  const updateRef = db.collection('updates').doc(id);
+  const updateSnap = await updateRef.get();
+
+  if (updateSnap.exists) {
+    const data = updateSnap.data()!;
+    const createdAtDate = data.createdAt.toDate();
+    return {
+      id: updateSnap.id,
+      ...data,
+      createdAt: createdAtDate.toISOString(),
+      comments: (data.comments || []).map((comment: any) => {
+        const commentCreatedAtDate = comment.createdAt.toDate();
+        return {
+            ...comment,
+            createdAt: commentCreatedAtDate.toISOString(),
+        }
+      }),
+    } as Update;
+  }
+  return undefined;
+}
 
 // --- WRITE OPERATIONS ---
 
-export async function addCountry(country: Omit<Country, 'id'>) {
-  const countriesCol = collection(db, 'countries');
-  await addDoc(countriesCol, country);
+async function addCountry(country: Omit<Country, 'id'>) {
+  const countriesCol = db.collection('countries');
+  await countriesCol.add(country);
 }
 
-export async function addUpdate(update: Omit<Update, 'id' | 'comments'>) {
+async function addUpdate(update: Omit<Update, 'id' | 'comments'>) {
     const newUpdateData: any = {
         ...update,
         createdAt: new Date(update.createdAt),
         comments: [],
     };
     
-    // Firestore doesn't accept undefined values.
-    // If coverImage is undefined, we don't include it in the object.
-    if (update.coverImage !== undefined) {
+    if (update.coverImage) {
         newUpdateData.coverImage = update.coverImage;
-    } else {
-        // Explicitly remove it if it's undefined, just in case.
-        delete newUpdateData.coverImage;
     }
 
-    await addDoc(collection(db, 'updates'), newUpdateData);
+    await db.collection('updates').add(newUpdateData);
 }
 
-export async function addCommentToUpdate(updateId: string, comment: Omit<Comment, 'id' | 'createdAt'>) {
-  const updateRef = doc(db, 'updates', updateId);
+async function addCommentToUpdate(updateId: string, comment: Omit<Comment, 'id' | 'createdAt'>) {
+  const updateRef = db.collection('updates').doc(updateId);
   const newComment = {
     ...comment,
     id: `c${Date.now()}`, 
-    createdAt: Timestamp.now(),
+    createdAt: new Date(),
   };
 
-  await updateDoc(updateRef, {
-    comments: arrayUnion(newComment),
+  await updateRef.update({
+    comments: FieldValue.arrayUnion(newComment),
   });
 }
 
 
-// --- SERVER ACTIONS ---
+// --- FORM SUBMISSION ACTIONS ---
 
 const CountrySchema = z.object({
   name: z.string().min(3, "Country name must be at least 3 characters."),
@@ -76,7 +158,6 @@ export async function registerCountryAction(prevState: any, formData: FormData) 
     await addCountry(validatedFields.data);
   } catch (e: any) {
     console.error("Firebase Error:", e);
-    // More specific error message
     if (e.code === 'permission-denied') {
         return { message: "Failed to register country. Permission denied. Please check Firestore rules.", success: false, errors: {} };
     }
@@ -154,7 +235,8 @@ export async function submitUpdateAction(prevState: any, formData: FormData) {
 
   revalidatePath("/");
   revalidatePath("/updates/submit");
-  return { message: "Update submitted successfully!", success: true, errors: {} };
+  revalidatePath("/countries");
+  redirect("/");
 }
 
 
@@ -228,3 +310,5 @@ export async function generateCoverAction(formData: FormData) {
     return { error: "Failed to generate magazine cover. Please try again." };
   }
 }
+
+    

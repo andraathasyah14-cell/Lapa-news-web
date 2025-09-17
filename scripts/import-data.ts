@@ -1,5 +1,5 @@
 
-import { addCountry, addUpdate } from '../src/lib/actions';
+import { addCountry, addUpdate } from '../src/lib/data';
 import { getCountries } from '../src/lib/data';
 
 const countryData = [
@@ -55,58 +55,69 @@ const updateData = [
     },
 ];
 
-
+// Note: This script is now broken as it relies on the now-deleted `lib/data.ts`
+// It needs to be updated to use server actions or firebase-admin directly if it is to be used.
 async function importCountries() {
-  console.log('Importing countries...');
-  for (const country of countryData) {
-    try {
-      await addCountry(country);
-      console.log(`Added country: ${country.name}`);
-    } catch (error) {
-      console.error(`Failed to add country ${country.name}: `, error);
-    }
-  }
-  console.log('Finished importing countries.\n');
+  console.log('This script is currently disabled.');
 }
-
 async function importUpdates() {
-    console.log('Importing updates...');
-    const countries = await getCountries();
-    const countryMap = new Map(countries.map(c => [c.name, c.id]));
-
-    for (const update of updateData) {
-        const { countryName, ...updatePayload } = update;
-        const countryId = countryMap.get(countryName);
-
-        if (!countryId) {
-            console.warn(`Skipping update "${update.title}" because country "${countryName}" was not found.`);
-            continue;
-        }
-
-        try {
-            await addUpdate({
-                ...updatePayload,
-                countryId,
-            });
-            console.log(`Added update: ${update.title}`);
-        } catch (error) {
-            console.error(`Failed to add update "${update.title}": `, error);
-        }
-    }
-    console.log('Finished importing updates.');
+  console.log('This script is currently disabled.');
 }
-
-
 async function main() {
-    // NOTE: This script does not check for duplicates.
-    // It's intended for seeding a fresh, empty database.
-    // Running it multiple times will create duplicate entries.
-    await importCountries();
-    await importUpdates();
+  console.log('Data import script is disabled due to architectural changes.');
+  console.log('Please update it to use firebase-admin if you need to run it.');
 }
 
-// This check ensures that the script only runs when executed directly
-// and not when imported by Next.js build process.
+
+// async function importCountries() {
+//   console.log('Importing countries...');
+//   for (const country of countryData) {
+//     try {
+//       await addCountry(country);
+//       console.log(`Added country: ${country.name}`);
+//     } catch (error) {
+//       console.error(`Failed to add country ${country.name}: `, error);
+//     }
+//   }
+//   console.log('Finished importing countries.\n');
+// }
+
+// async function importUpdates() {
+//     console.log('Importing updates...');
+//     const countries = await getCountries();
+//     const countryMap = new Map(countries.map(c => [c.name, c.id]));
+
+//     for (const update of updateData) {
+//         const { countryName, ...updatePayload } = update;
+//         const countryId = countryMap.get(countryName);
+
+//         if (!countryId) {
+//             console.warn(`Skipping update "${update.title}" because country "${countryName}" was not found.`);
+//             continue;
+//         }
+
+//         try {
+//             await addUpdate({
+//                 ...updatePayload,
+//                 countryId,
+//             });
+//             console.log(`Added update: ${update.title}`);
+//         } catch (error) {
+//             console.error(`Failed to add update "${update.title}": `, error);
+//         }
+//     }
+//     console.log('Finished importing updates.');
+// }
+
+
+// async function main() {
+//     // NOTE: This script does not check for duplicates.
+//     // It's intended for seeding a fresh, empty database.
+//     // Running it multiple times will create duplicate entries.
+//     await importCountries();
+//     await importUpdates();
+// }
+
 if (require.main === module) {
   main().catch(console.error).then(() => {
       console.log('\nData import complete. Press Ctrl+C to exit.');

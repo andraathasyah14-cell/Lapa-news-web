@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getCountries } from "@/lib/data";
+import { getCountriesAction } from "@/lib/actions";
 import {
   Table,
   TableBody,
@@ -48,7 +48,7 @@ export default function CountriesPage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const countriesData = await getCountries();
+        const countriesData = await getCountriesAction();
         setCountries(countriesData);
       } catch (error) {
         console.error("Failed to fetch countries:", error);
