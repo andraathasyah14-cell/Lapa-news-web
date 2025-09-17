@@ -4,9 +4,6 @@ import {
   doc,
   getDocs,
   getDoc,
-  addDoc,
-  updateDoc,
-  arrayUnion,
   query,
   where,
   orderBy,
@@ -32,13 +29,6 @@ export async function getCountryById(id: string): Promise<Country | undefined> {
   }
   return undefined;
 }
-
-export async function addCountry(country: Omit<Country, 'id'>) {
-  const countriesCol = collection(db, 'countries');
-  const docRef = await addDoc(countriesCol, country);
-  return { id: docRef.id, ...country };
-}
-
 
 // --- UPDATES ---
 
@@ -119,41 +109,4 @@ export async function getUpdateById(id: string): Promise<Update | undefined> {
     } as Update;
   }
   return undefined;
-}
-
-export async function addUpdate(update: Omit<Update, 'id' | 'comments'>) {
-    const newUpdateData = {
-        ...update,
-        createdAt: new Date(update.createdAt),
-        comments: [],
-    };
-    const docRef = await addDoc(collection(db, 'updates'), newUpdateData);
-    const docSnap = await getDoc(docRef);
-    const data = docSnap.data();
-    return { 
-        id: docRef.id,
-        ...data,
-        createdAt: (data?.createdAt as Timestamp).toDate().toISOString()
-    } as Update;
-}
-
-
-// --- COMMENTS ---
-
-export async function addCommentToUpdate(updateId: string, comment: Omit<Comment, 'id' | 'createdAt'>) {
-  const updateRef = doc(db, 'updates', updateId);
-  const newComment = {
-    ...comment,
-    id: `c${Date.now()}`, // Still using this for simplicity within the array
-    createdAt: Timestamp.now(),
-  };
-
-  await updateDoc(updateRef, {
-    comments: arrayUnion(newComment),
-  });
-
-  return { 
-      ...newComment,
-      createdAt: newComment.createdAt.toDate().toISOString(),
-  };
 }

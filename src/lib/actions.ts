@@ -2,10 +2,47 @@
 "use server";
 
 import { z } from "zod";
-import { addCountry, addUpdate, addCommentToUpdate, getUpdateById } from "@/lib/data";
+import { getUpdateById } from "@/lib/data";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { generateMagazineCover, type GenerateMagazineCoverInput } from "@/ai/flows/generate-magazine-cover";
+import { collection, addDoc, doc, updateDoc, arrayUnion, Timestamp } from 'firebase/firestore';
+import { db } from './firebase';
+import type { Country, Update, Comment } from './definitions';
+
+
+// --- WRITE OPERATIONS ---
+
+export async function addCountry(country: Omit<Country, 'id'>) {
+  const countriesCol = collection(db, 'countries');
+  const docRef = await addDoc(countriesCol, country);
+  return { id: docRef.id, ...country };
+}
+
+export async function addUpdate(update: Omit<Update, 'id' | 'comments'>) {
+    const newUpdateData = {
+        ...update,
+        createdAt: new Date(update.createdAt),
+        comments: [],
+    };
+    await addDoc(collection(db, 'updates'), newUpdateData);
+}
+
+export async function addCommentToUpdate(updateId: string, comment: Omit<Comment, 'id' | 'createdAt'>) {
+  const updateRef = doc(db, 'updates', updateId);
+  const newComment = {
+    ...comment,
+    id: `c${Date.now()}`, 
+    createdAt: Timestamp.now(),
+  };
+
+  await updateDoc(updateRef, {
+    comments: arrayUnion(newComment),
+  });
+}
+
+
+// --- SERVER ACTIONS ---
 
 const CountrySchema = z.object({
   name: z.string().min(3, "Country name must be at least 3 characters."),

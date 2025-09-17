@@ -50,9 +50,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const result = await signInWithPopup(auth, provider);
       setUser(result.user);
       router.push(redirectUrl);
-    } catch (error) {
+    } catch (error: any) {
+      // Don't log an error if the user closes the popup.
+      if (error.code === 'auth/popup-closed-by-user') {
+        return;
+      }
       console.error("Error during Google sign-in:", error);
-      // Handle specific errors if needed, e.g., popup closed by user
     } finally {
       setLoading(false);
     }

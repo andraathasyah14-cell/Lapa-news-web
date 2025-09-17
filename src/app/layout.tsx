@@ -28,14 +28,14 @@ export default async function RootLayout({
 
 
   return (
-    <JotaiProvider>
-      <html lang="en" className="light">
-        <head>
-          <link rel="preconnect" href="https://fonts.googleapis.com" />
-          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-          <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=PT+Sans:wght@400;700&display=swap" rel="stylesheet" />
-        </head>
-        <body className="font-body antialiased">
+    <html lang="en" className="light">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=PT+Sans:wght@400;700&display=swap" rel="stylesheet" />
+      </head>
+      <body className="font-body antialiased">
+        <JotaiProvider>
           <AuthProvider>
             <div className="fixed inset-0 z-[-1]">
                <div className="absolute inset-0 bg-background" />
@@ -61,8 +61,8 @@ export default async function RootLayout({
             <Toaster />
             <WhatsAppWarning />
           </AuthProvider>
-        </body>
-      </html>
-    </JotaiProvider>
-  );
-}
+        </JotaiProvider>
+      </body>
+    </html>
+
+    
